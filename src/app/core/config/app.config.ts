@@ -2,6 +2,8 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode, provi
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from '../../app.routes';
+import { FetchBackend, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { apiUrlInterceptor } from '../interceptors/api-url.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -11,6 +13,11 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    provideZonelessChangeDetection()
+    provideZonelessChangeDetection(),
+    provideHttpClient(
+      withInterceptors([
+        apiUrlInterceptor,
+      ])
+    ),
   ],
 };
