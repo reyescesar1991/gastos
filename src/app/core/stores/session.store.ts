@@ -14,6 +14,7 @@ export interface SessionState {
     token: string | null;
     isLoading: boolean;
     error: string | null;
+    successMessage: string | null;
 }
 
 // 2. Estado inicial
@@ -22,6 +23,7 @@ const initialState: SessionState = {
     token: null,
     isLoading: false,
     error: null,
+    successMessage: null,
 };
 
 export const SessionStore = signalStore(
@@ -51,12 +53,12 @@ export const SessionStore = signalStore(
                     const response = await firstValueFrom(authApi.login(credentials));
 
                     // 2. Mapeamos el DTO de la respuesta al modelo de Dominio
-                    const userDomain = UserMapper.toDomain(response.profile);
+                    const userDomain = UserMapper.toDomain(response.data.profile);
 
                     // 3. Actualizamos el estado global en una sola mutación atómica
                     patchState(store, {
                         user: userDomain,
-                        token: response.token,
+                        token: response.data.token,
                         isLoading: false,
                         error: null,
                     });

@@ -4,6 +4,8 @@ import { delay, Observable, of } from "rxjs";
 import { DUMMy_LOGIN_CREDENTIALS_RESPONSE } from "./mocks/loginCredentialsResponse.mock";
 import { SessionStore } from "../../core/stores/session.store";
 import { LoginCredentialsRequest, LoginCredentialsResponse } from "./models/login-credentials.model";
+import { RegisterUserRequest } from "./models/register-request.model";
+import { ApiSuccessResponse } from "../../core/models/api/api-success.model";
 
 
 export class AuthApiService {
@@ -13,17 +15,22 @@ export class AuthApiService {
 
 
 
-    login(credentials: LoginCredentialsRequest): Observable<LoginCredentialsResponse> {
+    login(credentials: LoginCredentialsRequest): Observable<ApiSuccessResponse<LoginCredentialsResponse>> {
         if (this.useMock) {
             return of(DUMMy_LOGIN_CREDENTIALS_RESPONSE).pipe(delay(600));
         }
 
-        return this.httpClient.post<LoginCredentialsResponse>('/auth/login', credentials);
+        return this.httpClient.post<ApiSuccessResponse<LoginCredentialsResponse>>('/auth/login', credentials);
     }
 
 
-    register(username: string, email: string, password: string): Observable<any> {
-        return this.httpClient.post('/auth/register', { username, email, password });
+    register(request: RegisterUserRequest): Observable<any> {
+        
+        if (this.useMock) {
+            return of(DUMMy_LOGIN_CREDENTIALS_RESPONSE).pipe(delay(600));
+        }
+            return this.httpClient.post('/auth/register', request);
+
     }
 
     forgotPassword(email: string) {
