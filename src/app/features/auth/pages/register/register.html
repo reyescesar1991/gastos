@@ -1,1 +1,113 @@
-<p>register works!</p>
+<section class="auth">
+  <header class="auth__intro">
+    <span class="auth__tag">Registro</span>
+    <h1 class="auth__title">Crea tu cuenta</h1>
+    <p class="auth__subtitle">Registra tus gastos y consulta el resumen cuando quieras.</p>
+  </header>
+
+  <form class="auth__card" novalidate (submit)="onSubmit($event)">
+    <div class="field">
+      <label class="field__label" for="username">Usuario</label>
+      <input
+        class="field__input"
+        id="username"
+        type="text"
+        autocomplete="username"
+        [attr.aria-invalid]="registerForm.username().touched() && registerForm.username().invalid()"
+        [class.field__input--invalid]="
+          registerForm.username().touched() && registerForm.username().invalid()
+        "
+        [formField]="registerForm.username"
+      />
+      @if (registerForm.username().touched() && registerForm.username().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of registerForm.username().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="email">Correo electrónico</label>
+      <input
+        class="field__input"
+        id="email"
+        type="email"
+        inputmode="email"
+        autocomplete="email"
+        [attr.aria-invalid]="registerForm.email().touched() && registerForm.email().invalid()"
+        [class.field__input--invalid]="
+          registerForm.email().touched() && registerForm.email().invalid()
+        "
+        [formField]="registerForm.email"
+      />
+      @if (registerForm.email().touched() && registerForm.email().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of registerForm.email().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="password">Contraseña</label>
+      <input
+        class="field__input"
+        id="password"
+        type="password"
+        autocomplete="new-password"
+        [attr.aria-invalid]="registerForm.password().touched() && registerForm.password().invalid()"
+        [class.field__input--invalid]="
+          registerForm.password().touched() && registerForm.password().invalid()
+        "
+        [formField]="registerForm.password"
+      />
+      @if (registerForm.password().touched() && registerForm.password().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of registerForm.password().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="confirmPassword">Confirmar contraseña</label>
+      <input
+        class="field__input"
+        id="confirmPassword"
+        type="password"
+        autocomplete="new-password"
+        [attr.aria-invalid]="
+          registerForm.confirmPassword().touched() && registerForm.confirmPassword().invalid()
+        "
+        [class.field__input--invalid]="
+          registerForm.confirmPassword().touched() && registerForm.confirmPassword().invalid()
+        "
+        [formField]="registerForm.confirmPassword"
+      />
+      @if (registerForm.confirmPassword().touched() && registerForm.confirmPassword().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of registerForm.confirmPassword().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <ul class="rules">
+      @for (rule of rules; track rule) {
+        <li>{{ rule }}</li>
+      }
+    </ul>
+
+    <button class="btn" type="submit" [disabled]="registerForm().invalid()">Crear cuenta</button>
+  </form>
+
+  <p class="auth__footer">
+    ¿Ya tienes cuenta?
+    <a class="auth__link" routerLink="/auth/login">Iniciar sesión</a>
+  </p>
+</section>

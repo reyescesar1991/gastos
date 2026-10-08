@@ -1,1 +1,98 @@
-/* You can add global styles to this file, and also import other style files */
+/* ---------------------------------------------------------------------------
+ * Tokens globales de la app.
+ *
+ * Paleta cálida monocroma + acentos pastel apagados, definidos por la skill
+ * `agents/skills/taste-skill.md` (minimalismo utilitario editorial).
+ * Cada pantalla consume estas variables desde su propio .scss; aquí solo vive
+ * la paleta y el reset, no estilos de componentes.
+ * ------------------------------------------------------------------------- */
+
+:root {
+  /* Superficies */
+  --canvas: #f7f6f3;
+  --surface: #ffffff;
+  --surface-muted: #f9f9f8;
+  --border: #eaeaea;
+  --border-strong: rgba(0, 0, 0, 0.14);
+
+  /* Tinta (nunca negro absoluto) */
+  --ink: #111111;
+  --ink-soft: #2f3437;
+  --ink-muted: #787774;
+  --ink-inverse: #ffffff;
+
+  /* Acentos pastel: fondo + texto con contraste suficiente */
+  --pale-red: #fdebec;
+  --pale-red-ink: #9f2f2d;
+  --pale-blue: #e1f3fe;
+  --pale-blue-ink: #1f6c9f;
+  --pale-green: #edf3ec;
+  --pale-green-ink: #346538;
+  --pale-yellow: #fbf3db;
+  --pale-yellow-ink: #956400;
+
+  /* Tipografía */
+  --font-sans: 'SF Pro Display', 'Geist Sans', 'Helvetica Neue', 'Switzer', system-ui, sans-serif;
+  --font-serif: 'Lyon Text', 'Newsreader', 'Playfair Display', 'Instrument Serif', Georgia, serif;
+  --font-mono: 'Geist Mono', 'SF Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Radios: crisp, nunca pill salvo tags */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 9999px;
+
+  /* Espaciado */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Movimiento */
+  --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-reveal: 600ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
