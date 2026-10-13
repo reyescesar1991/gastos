@@ -1,0 +1,57 @@
+<div class="toast-region" role="region" aria-label="Notificaciones">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <article class="toast" [class]="'toast--' + toast.type" role="status">
+      <span class="toast__icon" aria-hidden="true">
+        @switch (toast.type) {
+          @case ('success') {
+            <svg class="toast__glyph" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M8 12.4 10.6 15 16 9.4" />
+            </svg>
+          }
+          @case ('error') {
+            <svg class="toast__glyph" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M9 9l6 6M15 9l-6 6" />
+            </svg>
+          }
+          @case ('warning') {
+            <svg class="toast__glyph" viewBox="0 0 24 24">
+              <path d="M12 3.6 21.4 20H2.6z" />
+              <path d="M12 10v4" />
+              <path d="M12 16.8h.01" />
+            </svg>
+          }
+          @default {
+            <svg class="toast__glyph" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v5" />
+              <path d="M12 7.6h.01" />
+            </svg>
+          }
+        }
+      </span>
+
+      <p class="toast__message">{{ toast.message }}</p>
+
+      <button
+        class="toast__close"
+        type="button"
+        aria-label="Cerrar notificación"
+        (click)="toastService.dismiss(toast.id)"
+      >
+        <svg class="toast__glyph" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+
+      @if (toast.duration > 0) {
+        <span
+          class="toast__timer"
+          aria-hidden="true"
+          [style.--toast-duration]="toast.duration + 'ms'"
+        ></span>
+      }
+    </article>
+  }
+</div>

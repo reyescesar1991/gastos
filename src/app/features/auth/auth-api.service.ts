@@ -6,6 +6,7 @@ import { SessionStore } from "../../core/stores/session.store";
 import { LoginCredentialsRequest, LoginCredentialsResponse } from "./models/login-credentials.model";
 import { RegisterUserRequest } from "./models/register-request.model";
 import { ApiSuccessResponse } from "../../core/models/api/api-success.model";
+import { ForgotPasswordRequest } from "./models/forgot-password.model";
 
 
 export class AuthApiService {
@@ -24,17 +25,21 @@ export class AuthApiService {
     }
 
 
-    register(request: RegisterUserRequest): Observable<any> {
+    register(request: RegisterUserRequest): Observable<ApiSuccessResponse<LoginCredentialsResponse>> {
         
         if (this.useMock) {
             return of(DUMMy_LOGIN_CREDENTIALS_RESPONSE).pipe(delay(600));
         }
-            return this.httpClient.post('/auth/register', request);
+            return this.httpClient.post<ApiSuccessResponse<LoginCredentialsResponse>>('/auth/register', request);
 
     }
 
-    forgotPassword(email: string) {
-        return this.httpClient.post('/auth/forgot-password', { email });
+    forgotPassword(request : ForgotPasswordRequest): Observable<ApiSuccessResponse<void>> {
+        
+        if(this.useMock){
+            return of ({statusCode: 200, message: 'Correo de recuperación enviado', data: undefined}).pipe(delay(600));
+        }
+        return this.httpClient.post<ApiSuccessResponse<void>>('/auth/forgot-password', request);
     }
 
 }

@@ -7,6 +7,9 @@ import { firstValueFrom } from "rxjs";
 import { LoginCredentialsRequest } from "../../features/auth/models/login-credentials.model";
 import { UserMapper } from "../models/user/user.mapper";
 import { AuthApiService } from "../../features/auth/auth-api.service";
+import { RegisterUserRequest } from "../../features/auth/models/register-request.model";
+import { ForgotPasswordRequest } from "../../features/auth/models/forgot-password.model";
+import { ToastService } from "../services/toast-service";
 
 // 1. Definimos la interfaz del estado de sesión
 export interface SessionState {
@@ -40,7 +43,7 @@ export const SessionStore = signalStore(
 
     // Métodos y acciones para modificar el estado
     withMethods(
-        (store, authApi = inject(AuthApiService), router = inject(Router)) => ({
+        (store, authApi = inject(AuthApiService), router = inject(Router), toastService = inject(ToastService)) => ({
 
             /**
      * Accion principal de Login que orquesta la API y el estado
@@ -73,6 +76,75 @@ export const SessionStore = signalStore(
                         error: messageError,
                         isLoading: false,
                     });
+
+                    // 6. Mostramos el toast
+                    toastService.error(messageError, { duration: 5000 });
+                }
+            },
+
+            async register(request: RegisterUserRequest) : Promise<void> {
+
+                patchState(store, { isLoading: true, error: null });
+
+                try{
+
+                    const response = await firstValueFrom(authApi.register(request));
+
+                    const userDomain = UserMapper.toDomain(response.data.profile);
+
+                    patchState(store, {
+                        user: userDomain,
+                        token: response.data.token,
+                        isLoading: false,
+                        error: null,
+                    });
+
+                    toastService.success(response.message, { duration: 5000 });
+
+                    router.navigate(['dashboard']);
+
+                }
+                catch (err){
+
+                    const messageError = ErrorUtils.getErrorMessage(err);
+
+                    patchState(store, {
+                        error: messageError,
+                        isLoading: false,
+                    });
+
+                    toastService.error(messageError, { duration: 5000 });
+                }
+            },
+
+            async forgotPassword(request : ForgotPasswordRequest): Promise<void> {
+
+                patchState(store, { isLoading: true, error: null, successMessage: null });
+
+                try{
+
+                    const response = await firstValueFrom(authApi.forgotPassword(request));
+
+                    patchState(store, {
+                        isLoading: false,
+                        error: null,
+                        successMessage: response.message,
+                    });
+
+                    toastService.success(response.message, { duration: 5000 });
+
+                    router.navigate(['/login']);
+
+                }catch (err){
+
+                    const messageError = ErrorUtils.getErrorMessage(err);
+
+                    patchState(store, {
+                        error: messageError,
+                        isLoading: false,
+                    });
+
+                    toastService.error(messageError, { duration: 5000 });
                 }
             },
 

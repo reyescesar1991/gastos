@@ -1,0 +1,160 @@
+/* ---------------------------------------------------------------------------
+ * Notificaciones tipo toast.
+ *
+ * Fijas en la esquina inferior derecha en móvil y escritorio. Siguen la paleta
+ * warm-monochrome de `styles.scss`: superficie clara, borde de 1px, radio
+ * crisp y acentos pastel apagados por variante. Sombra difusa por debajo de
+ * 0.05 de opacidad, sin gradientes.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  position: fixed;
+  inset-block-end: var(--space-4);
+  inset-inline-end: var(--space-4);
+  z-index: 1000;
+  display: block;
+  width: min(20rem, calc(100vw - var(--space-4) * 2));
+  pointer-events: none;
+}
+
+.toast-region {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.toast {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: var(--space-3);
+  overflow: hidden;
+  padding: var(--space-3);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  pointer-events: auto;
+  animation: toast-in 300ms var(--ease-out-quint) both;
+}
+
+/* Acento por variante: alimenta el fondo del icono y la barra del timer. */
+.toast--success {
+  --toast-accent: var(--pale-green);
+  --toast-accent-ink: var(--pale-green-ink);
+}
+
+.toast--error {
+  --toast-accent: var(--pale-red);
+  --toast-accent-ink: var(--pale-red-ink);
+}
+
+.toast--warning {
+  --toast-accent: var(--pale-yellow);
+  --toast-accent-ink: var(--pale-yellow-ink);
+}
+
+.toast--info {
+  --toast-accent: var(--pale-blue);
+  --toast-accent-ink: var(--pale-blue-ink);
+}
+
+.toast__icon {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--toast-accent);
+  color: var(--toast-accent-ink);
+}
+
+.toast__glyph {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.toast__message {
+  margin: 0;
+  padding-block: 2px;
+  color: var(--ink);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.toast__close {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-xs);
+  background-color: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.toast__close:hover {
+  color: var(--ink);
+  background-color: var(--surface-muted);
+}
+
+.toast__close .toast__glyph {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* Barra del temporizador: se agota en línea con la duración del toast. */
+.toast__timer {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--toast-accent-ink);
+  transform-origin: left center;
+  animation: toast-timer var(--toast-duration, 4000ms) linear forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-timer {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+
+  .toast__timer {
+    animation: none;
+  }
+}
