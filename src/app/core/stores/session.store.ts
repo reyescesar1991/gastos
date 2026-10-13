@@ -58,6 +58,9 @@ export const SessionStore = signalStore(
                     // 2. Mapeamos el DTO de la respuesta al modelo de Dominio
                     const userDomain = UserMapper.toDomain(response.data.profile);
 
+                    // Guardamos el usuario en localStorage para persistencia
+                    localStorage.setItem('auth_user', JSON.stringify(userDomain));
+
                     // 3. Actualizamos el estado global en una sola mutación atómica
                     patchState(store, {
                         user: userDomain,
@@ -65,6 +68,9 @@ export const SessionStore = signalStore(
                         isLoading: false,
                         error: null,
                     });
+
+                    // Guardamos el token en localStorage para persistencia
+                    localStorage.setItem('auth_token', response.data.token);
 
                     // 4. Redirigimos al usuario
                     router.navigate(['/dashboard']);
@@ -82,11 +88,11 @@ export const SessionStore = signalStore(
                 }
             },
 
-            async register(request: RegisterUserRequest) : Promise<void> {
+            async register(request: RegisterUserRequest): Promise<void> {
 
                 patchState(store, { isLoading: true, error: null });
 
-                try{
+                try {
 
                     const response = await firstValueFrom(authApi.register(request));
 
@@ -99,12 +105,15 @@ export const SessionStore = signalStore(
                         error: null,
                     });
 
+                    // Guardamos el token en sessionStorage para persistencia temporal
+                    localStorage.setItem('auth_token', response.data.token);
+
                     toastService.success(response.message, { duration: 5000 });
 
                     router.navigate(['dashboard']);
 
                 }
-                catch (err){
+                catch (err) {
 
                     const messageError = ErrorUtils.getErrorMessage(err);
 
@@ -117,11 +126,11 @@ export const SessionStore = signalStore(
                 }
             },
 
-            async forgotPassword(request : ForgotPasswordRequest): Promise<void> {
+            async forgotPassword(request: ForgotPasswordRequest): Promise<void> {
 
                 patchState(store, { isLoading: true, error: null, successMessage: null });
 
-                try{
+                try {
 
                     const response = await firstValueFrom(authApi.forgotPassword(request));
 
@@ -135,7 +144,7 @@ export const SessionStore = signalStore(
 
                     router.navigate(['/login']);
 
-                }catch (err){
+                } catch (err) {
 
                     const messageError = ErrorUtils.getErrorMessage(err);
 
@@ -148,10 +157,32 @@ export const SessionStore = signalStore(
                 }
             },
 
-            logout(): void {
-                patchState(store, initialState);
+            /**
+   * Restaura la sesión desde el localStorage al iniciar la app
+   */
+            initSession(): void {
+                const token = localStorage.getItem('auth_token');
+                const userJson = localStorage.getItem('auth_user');
 
-                router.navigate(['/login']);
+                if (token && userJson) {
+                    try {
+                        const user = JSON.parse(userJson);
+                        patchState(store, { token, user });
+                    } catch {
+                        // Si el JSON está corrupto, limpiamos por seguridad
+                        localStorage.removeItem('auth_token');
+                        localStorage.removeItem('auth_user');
+                    }
+                }
+            },
+
+            logout(): void {
+                // Limpiamos el localStorage al salir
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('auth_user');
+
+                patchState(store, initialState);
+                router.navigate(['/auth/login']);
             },
 
             setError(error: string): void {
