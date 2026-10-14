@@ -1,0 +1,172 @@
+/* ---------------------------------------------------------------------------
+ * Header de la app.
+ *
+ * Sticky en móvil y escritorio. Mobile first: hamburguesa + identidad del
+ * usuario (avatar y nombre) + cierre de sesión; desde 768px la hamburguesa
+ * desaparece porque el menú ya vive en la barra lateral.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: block;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Botón de hamburguesa: solo móvil */
+.app-header__menu {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.app-header__menu:hover {
+  background-color: var(--surface-muted);
+  color: var(--ink);
+}
+
+.app-header__menu:active {
+  transform: scale(0.98);
+}
+
+/* Identidad: avatar + nombre, es un botón hacia la configuración de usuario */
+.app-header__identity {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.app-header__identity:hover {
+  background-color: var(--surface-muted);
+}
+
+.app-header__avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background-color: var(--pale-blue);
+  color: var(--pale-blue-ink);
+}
+
+.app-header__avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.app-header__avatar-initials {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.app-header__name {
+  overflow: hidden;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Cierre de sesión */
+.app-header__logout {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.app-header__logout:hover {
+  background-color: var(--pale-red);
+  border-color: var(--pale-red);
+  color: var(--pale-red-ink);
+}
+
+.app-header__logout:active {
+  transform: scale(0.98);
+}
+
+/* En pantallas muy angostas el texto del logout cede su lugar al icono */
+@media (min-width: 480px) {
+  .app-header__logout-label {
+    display: inline;
+  }
+}
+
+@media (max-width: 479px) {
+  .app-header__logout-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .app-header__logout {
+    justify-content: center;
+    width: 2.75rem;
+    padding: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .app-header {
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-6);
+  }
+
+  .app-header__menu {
+    display: none;
+  }
+
+  .app-header__name {
+    font-size: 1rem;
+  }
+}

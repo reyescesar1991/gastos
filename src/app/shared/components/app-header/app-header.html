@@ -1,0 +1,39 @@
+<header class="app-header">
+  <button
+    class="app-header__menu"
+    type="button"
+    aria-controls="app-nav-menu"
+    [attr.aria-expanded]="navStore.isMenuOpen()"
+    [attr.aria-label]="navStore.isMenuOpen() ? 'Cerrar menú' : 'Abrir menú'"
+    (click)="onToggleMenu()"
+  >
+    <app-icon [name]="navStore.isMenuOpen() ? 'close' : 'menu'" />
+  </button>
+
+  <button
+    class="app-header__identity"
+    type="button"
+    aria-label="Configuración de usuario"
+    (click)="onAvatarClick()"
+  >
+    <span class="app-header__avatar">
+      @if (avatarUrl() && !avatarFailed()) {
+        <img
+          class="app-header__avatar-image"
+          [src]="avatarUrl()"
+          alt=""
+          (error)="avatarFailed.set(true)"
+        />
+      } @else {
+        <span class="app-header__avatar-initials" aria-hidden="true">{{ initials() }}</span>
+      }
+    </span>
+
+    <span class="app-header__name">{{ sessionStore.nameUser() }}</span>
+  </button>
+
+  <button class="app-header__logout" type="button" (click)="onLogout()">
+    <app-icon name="logout" size="sm" />
+    <span class="app-header__logout-label">Cerrar sesión</span>
+  </button>
+</header>

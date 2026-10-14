@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { DASHBOARD_ROUTES } from './features/dashboard/dashboard.routes';
 
 export const routes: Routes = [
 
@@ -13,8 +12,19 @@ export const routes: Routes = [
         loadChildren: () => import('./features/auth/auth-routes').then((m) => m.AUTH_ROUTES)
     },
     {
-    path: 'dashboard',
-    loadChildren: () => import('./features/dashboard/dashboard.routes').then(m => DASHBOARD_ROUTES)
-  },
-    
+        // Ruta padre del layout: header y menú disponibles en todos los módulos
+        path: '',
+        loadComponent: () => import('./shared/layout/app-layout/app-layout').then((m) => m.AppLayout),
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard)
+            },
+            {
+                path: '**',
+                redirectTo: 'dashboard'
+            }
+        ]
+    },
+
 ];

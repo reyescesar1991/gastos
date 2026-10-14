@@ -1,0 +1,70 @@
+/* ---------------------------------------------------------------------------
+ * Layout de la app.
+ *
+ * Mobile first: una columna (header, menú desplegable, contenido). Desde 768px
+ * pasa a grid con el header a lo ancho y el menú como barra lateral de 15rem.
+ * El cambio de breakpoint es solo CSS, sin lógica en el componente.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--canvas);
+}
+
+/* Atajo de teclado: fuera de pantalla hasta que recibe foco */
+.layout__skip {
+  position: fixed;
+  inset-block-start: var(--space-3);
+  inset-inline-start: var(--space-4);
+  z-index: 30;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background-color: var(--ink);
+  color: var(--ink-inverse);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 150ms ease;
+}
+
+.layout__skip:focus {
+  transform: translateY(0);
+}
+
+.layout__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-block: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  :host {
+    display: grid;
+    grid-template-columns: 15rem 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  app-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  app-nav-menu {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .layout__content {
+    grid-column: 2;
+    grid-row: 2;
+    padding-block: var(--space-8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout__skip {
+    transition: none;
+  }
+}

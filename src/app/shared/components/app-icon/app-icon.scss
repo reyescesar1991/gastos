@@ -1,0 +1,24 @@
+/* ---------------------------------------------------------------------------
+ * Icono de la app.
+ *
+ * Un solo trazo (1.75) para todo el registro y color heredado con
+ * `currentColor`, de modo que el icono se adapta al contexto donde se use. El
+ * tamaño llega desde el host en `--icon-size`.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon__glyph {
+  width: var(--icon-size, 1.25rem);
+  height: var(--icon-size, 1.25rem);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

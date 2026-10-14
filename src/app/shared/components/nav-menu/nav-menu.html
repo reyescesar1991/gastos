@@ -1,0 +1,63 @@
+<nav
+  id="app-nav-menu"
+  class="nav-menu"
+  [class.nav-menu--open]="navStore.isMenuOpen()"
+  aria-label="Menú principal"
+>
+  <ul class="nav-menu__list">
+    @for (item of navStore.items(); track item.id; let index = $index) {
+      <li class="nav-menu__item" [style.--index]="index">
+        <button
+          class="nav-menu__link"
+          type="button"
+          [class.nav-menu__link--active]="item.enabled && isActive(item)"
+          [class.nav-menu__link--disabled]="!item.enabled"
+          [disabled]="!item.enabled"
+          [attr.aria-disabled]="item.enabled ? null : 'true'"
+          [attr.aria-current]="item.enabled && isActive(item) ? 'page' : null"
+          [attr.aria-expanded]="item.children?.length ? isExpanded(item) : null"
+          (click)="onSelect(item)"
+        >
+          <app-icon class="nav-menu__icon" [name]="item.icon" size="sm" />
+          <span class="nav-menu__label">{{ item.label }}</span>
+
+          @if (!item.enabled) {
+            <span class="nav-menu__state">Próximamente</span>
+          }
+
+          @if (item.children?.length) {
+            <span class="nav-menu__chevron" [class.nav-menu__chevron--open]="isExpanded(item)">
+              <app-icon name="chevron-down" size="sm" />
+            </span>
+          }
+        </button>
+
+        @if (item.children?.length && isExpanded(item)) {
+          <ul class="nav-menu__sublist">
+            @for (child of item.children; track child.id) {
+              <li>
+                <button
+                  class="nav-menu__link nav-menu__link--child"
+                  type="button"
+                  [class.nav-menu__link--active]="child.enabled && isActive(child)"
+                  [class.nav-menu__link--disabled]="!child.enabled"
+                  [disabled]="!child.enabled"
+                  [attr.aria-disabled]="child.enabled ? null : 'true'"
+                  [attr.aria-current]="child.enabled && isActive(child) ? 'page' : null"
+                  (click)="onSelectChild(child)"
+                >
+                  <app-icon class="nav-menu__icon" [name]="child.icon" size="sm" />
+                  <span class="nav-menu__label">{{ child.label }}</span>
+
+                  @if (!child.enabled) {
+                    <span class="nav-menu__state">Próximamente</span>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </li>
+    }
+  </ul>
+</nav>

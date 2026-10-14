@@ -1,0 +1,172 @@
+/* ---------------------------------------------------------------------------
+ * Menú de navegación.
+ *
+ * Mobile first: en móvil es un desplegable que ocupa el ancho bajo el header y
+ * solo existe cuando `isMenuOpen` está activo (display: none en reposo, así no
+ * queda accesible para lectores de pantalla). Desde 768px pasa a barra lateral
+ * siempre visible. La entrada anima solo `opacity` y `transform`.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: block;
+}
+
+.nav-menu {
+  display: none;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-menu--open {
+  display: block;
+  animation: nav-menu-in 320ms var(--ease-out-quint) both;
+}
+
+.nav-menu__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-menu__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.nav-menu__link:hover:not(:disabled) {
+  background-color: var(--surface-muted);
+  color: var(--ink);
+}
+
+/* Opción seleccionada: fondo suave + barra de acento pastel a la izquierda */
+.nav-menu__link--active {
+  position: relative;
+  background-color: var(--surface-muted);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.nav-menu__link--active::before {
+  content: '';
+  position: absolute;
+  inset-block: 25%;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: var(--radius-xs);
+  background-color: var(--pale-blue-ink);
+}
+
+/* Opción desactivada: atenuada, sin navegación */
+.nav-menu__link--disabled {
+  color: var(--ink-muted);
+  cursor: not-allowed;
+}
+
+.nav-menu__icon {
+  color: var(--ink-muted);
+}
+
+.nav-menu__link--active .nav-menu__icon {
+  color: var(--ink);
+}
+
+.nav-menu__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Tag de estado: pastel amarillo, micro-tipografía mono en mayúsculas */
+.nav-menu__state {
+  flex: 0 0 auto;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-pill);
+  background-color: var(--pale-yellow);
+  color: var(--pale-yellow-ink);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nav-menu__chevron {
+  display: inline-flex;
+  color: var(--ink-muted);
+  transition: transform 200ms ease;
+}
+
+.nav-menu__chevron--open {
+  transform: rotate(180deg);
+}
+
+.nav-menu__sublist {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: var(--space-1) 0 0;
+  padding: 0 0 0 var(--space-6);
+  list-style: none;
+}
+
+.nav-menu__link--child {
+  min-height: 2.5rem;
+  font-size: 0.875rem;
+}
+
+@keyframes nav-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .nav-menu {
+    display: block;
+    height: 100%;
+    padding: var(--space-6) var(--space-4);
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+  }
+
+  .nav-menu--open {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-menu--open {
+    animation: none;
+  }
+
+  .nav-menu__chevron {
+    transition: none;
+  }
+}
