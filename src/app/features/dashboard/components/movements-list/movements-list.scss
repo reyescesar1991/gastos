@@ -1,0 +1,153 @@
+/* ---------------------------------------------------------------------------
+ * Últimos movimientos.
+ *
+ * Una tarjeta blanca con borde de 1px y filas separadas por divisores (sin caja
+ * por fila). Cada fila define su acento según `data-type`: el pastel se usa en
+ * el chip, en la etiqueta de tipo y en la tinta del importe. Las filas entran
+ * escalonadas con `--index`.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: block;
+  animation: movements-reveal var(--duration-reveal) var(--ease-out-quint) 160ms both;
+}
+
+.section-title {
+  margin-bottom: var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.movements__status {
+  padding: var(--space-4);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+}
+
+.movements__list {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.movement {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  animation: movements-reveal var(--duration-reveal) var(--ease-out-quint)
+    calc(var(--index, 0) * 80ms) both;
+}
+
+.movement:last-child {
+  border-bottom: none;
+}
+
+/* Semaforización por tipo de movimiento */
+.movement[data-type='income'] {
+  --cell-accent: var(--pale-green);
+  --cell-accent-ink: var(--pale-green-ink);
+}
+
+.movement[data-type='outcome'] {
+  --cell-accent: var(--pale-red);
+  --cell-accent-ink: var(--pale-red-ink);
+}
+
+.movement__chip {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--cell-accent);
+  color: var(--cell-accent-ink);
+}
+
+.movement__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.movement__description {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.movement__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+}
+
+/* Tag de tipo: pastel del semáforo, mono en mayúsculas */
+.movement__type {
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-pill);
+  background-color: var(--cell-accent);
+  color: var(--cell-accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.movement__currency,
+.movement__date,
+.movement__amount {
+  font-family: var(--font-mono);
+}
+
+.movement__amount {
+  flex: 0 0 auto;
+  color: var(--cell-accent-ink);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@keyframes movements-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .movement__amount {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  .movement {
+    animation: none;
+  }
+}

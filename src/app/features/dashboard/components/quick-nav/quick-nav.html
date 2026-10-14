@@ -1,0 +1,58 @@
+<section
+  class="quick-nav"
+  aria-labelledby="quick-nav-title"
+  (focusout)="onFocusOut($event)"
+>
+  <h2 class="section-title" id="quick-nav-title">Navegación rápida</h2>
+
+  <div class="quick-nav__field">
+    <span class="quick-nav__icon" aria-hidden="true">
+      <app-icon name="search" size="sm" />
+    </span>
+    <input
+      class="quick-nav__input"
+      id="quick-nav-input"
+      type="text"
+      role="combobox"
+      autocomplete="off"
+      placeholder="Buscar una opción del menú"
+      aria-controls="quick-nav-listbox"
+      aria-labelledby="quick-nav-title"
+      [attr.aria-expanded]="isOpen()"
+      [attr.aria-activedescendant]="activeOptionId()"
+      [value]="query()"
+      (focus)="onFocus()"
+      (input)="onInput($event)"
+      (keydown)="onKeydown($event)"
+    />
+  </div>
+
+  @if (isOpen()) {
+    <ul class="quick-nav__list" id="quick-nav-listbox" role="listbox" aria-labelledby="quick-nav-title">
+      @if (options().length === 0) {
+        <li class="quick-nav__empty" role="presentation">
+          @if (query() === '') {
+            Aún no hay opciones disponibles: los módulos están en construcción.
+          } @else {
+            Sin coincidencias para «{{ query() }}».
+          }
+        </li>
+      }
+
+      @for (item of options(); track item.id; let index = $index) {
+        <li
+          class="quick-nav__option"
+          [id]="'quick-nav-option-' + item.id"
+          [class.quick-nav__option--active]="activeOptionIndex() === index"
+          role="option"
+          tabindex="-1"
+          [attr.aria-selected]="activeOptionIndex() === index"
+          (click)="onSelect(item)"
+        >
+          <app-icon class="quick-nav__option-icon" [name]="item.icon" size="sm" />
+          <span>{{ item.label }}</span>
+        </li>
+      }
+    </ul>
+  }
+</section>

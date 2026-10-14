@@ -1,0 +1,127 @@
+/* ---------------------------------------------------------------------------
+ * Vista de resumen (shell).
+ *
+ * Mobile first: una columna con los cuatro bloques apilados y espaciado
+ * generoso entre secciones; desde 768px se amplían los márgenes laterales. Cada
+ * bloque trae sus propios estilos (balance, navegación rápida y movimientos);
+ * acá viven el layout, la intro editorial y el acceso rápido.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: block;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: var(--space-2) var(--space-4) var(--space-10);
+}
+
+/* Intro editorial: titular serif + entradilla atenuada */
+.dashboard__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  animation: dashboard-reveal var(--duration-reveal) var(--ease-out-quint) both;
+}
+
+.dashboard__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.dashboard__subtitle {
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+}
+
+/* Acceso rápido: CTA sólido, deshabilitado mientras la acción no exista */
+.quick-action {
+  animation: dashboard-reveal var(--duration-reveal) var(--ease-out-quint) 240ms both;
+}
+
+.quick-action__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem var(--space-4);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background-color: var(--ink);
+  color: var(--ink-inverse);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.quick-action__button:hover:not(:disabled) {
+  background-color: #333333;
+  border-color: #333333;
+}
+
+.quick-action__button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.quick-action__button:disabled {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--ink-muted);
+  cursor: not-allowed;
+}
+
+.quick-action__state {
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-pill);
+  background-color: var(--pale-yellow);
+  color: var(--pale-yellow-ink);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@keyframes dashboard-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .dashboard {
+    gap: var(--space-10);
+    padding: var(--space-4) var(--space-8) var(--space-10);
+  }
+
+  .quick-action__button {
+    width: auto;
+    min-width: 16rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard__intro,
+  .quick-action {
+    animation: none;
+  }
+}

@@ -1,0 +1,56 @@
+<section class="summary" aria-labelledby="summary-title">
+  <h2 class="section-title" id="summary-title">Balance</h2>
+
+  <div class="summary__grid">
+    <article class="summary__cell summary__cell--income" [class.summary__cell--empty]="!balance()">
+      <span class="summary__chip" aria-hidden="true">
+        <app-icon name="arrow-up" size="sm" />
+      </span>
+      <p class="summary__label">Ingresos</p>
+      <p class="summary__value">
+        @if (balance(); as data) {
+          {{ amount(data.income) }}
+        } @else {
+          {{ nullValue }}
+        }
+      </p>
+    </article>
+
+    <article class="summary__cell summary__cell--outcome" [class.summary__cell--empty]="!balance()">
+      <span class="summary__chip" aria-hidden="true">
+        <app-icon name="arrow-down" size="sm" />
+      </span>
+      <p class="summary__label">Egresos</p>
+      <p class="summary__value">
+        @if (balance(); as data) {
+          {{ amount(data.outcome) }}
+        } @else {
+          {{ nullValue }}
+        }
+      </p>
+    </article>
+
+    <article
+      class="summary__cell summary__cell--available"
+      [class.summary__cell--empty]="!balance()"
+    >
+      <span class="summary__chip" aria-hidden="true">
+        <app-icon name="card" size="sm" />
+      </span>
+      <p class="summary__label">Disponible</p>
+      <p class="summary__value">
+        @if (balance(); as data) {
+          {{ amount(data.available) }}
+        } @else {
+          {{ nullValue }}
+        }
+      </p>
+    </article>
+  </div>
+
+  @if (!balance()) {
+    <p class="summary__empty">
+      Sin registros todavía. Cuando registres tu primer movimiento verás aquí el resumen.
+    </p>
+  }
+</section>

@@ -10,7 +10,9 @@ export type IconName =
   | 'close'
   | 'logout'
   | 'chevron-down'
-  | 'search';
+  | 'search'
+  | 'arrow-up'
+  | 'arrow-down';
 
 /** Tamaños soportados por el icono. */
 export type IconSize = 'sm' | 'md' | 'lg';

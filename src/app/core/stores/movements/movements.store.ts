@@ -9,6 +9,9 @@ import { ErrorUtils } from "../../utils/error-handler.util";
 
 
 
+// Cantidad de movimientos que expone la vista de resumen (dashboard).
+export const LATEST_MOVEMENTS_LIMIT = 5;
+
 // 1. Definimos la interfaz del estado de la tienda de movimientos
 export interface BalanceState {
     movements: Movement[] | null;
@@ -33,6 +36,17 @@ export const MovementsStore = signalStore(
         (store) => ({
 
             movementsList: computed(() => store.movements() ?? []),
+
+            // Últimos movimientos para la vista de resumen: orden cronológico
+            // inverso (la API envía fechas ISO YYYY-MM-DD, que ordenan
+            // lexicográficamente igual que cronológicamente) y recorte al
+            // límite de la vista.
+            latestMovements: computed(() => [...(store.movements() ?? [])]
+                .sort((first, second) => second.date.localeCompare(first.date))
+                .slice(0, LATEST_MOVEMENTS_LIMIT)),
+
+            // Permite distinguir "sin movimientos" de una lista vacía por filtro.
+            hasMovements: computed(() => (store.movements() ?? []).length > 0),
         })
     ),
 

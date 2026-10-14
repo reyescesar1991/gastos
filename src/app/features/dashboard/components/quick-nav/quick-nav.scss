@@ -1,0 +1,132 @@
+/* ---------------------------------------------------------------------------
+ * Navegación rápida.
+ *
+ * El input sigue el patrón de los campos de la app (borde de 1px, radio crisp y
+ * 16px para evitar el zoom automático en iOS) y el desplegable es una tarjeta
+ * blanca con borde de 1px y sombra difusa por debajo de 0.05 de opacidad.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: block;
+  position: relative;
+  animation: quick-nav-reveal var(--duration-reveal) var(--ease-out-quint) 80ms both;
+}
+
+.section-title {
+  margin-bottom: var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.quick-nav__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.quick-nav__icon {
+  position: absolute;
+  inset-inline-start: var(--space-3);
+  display: inline-flex;
+  color: var(--ink-muted);
+  pointer-events: none;
+}
+
+.quick-nav__input {
+  width: 100%;
+  padding: 0.625rem var(--space-3) 0.625rem 2.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.4;
+  transition: border-color 150ms ease;
+}
+
+.quick-nav__input::placeholder {
+  color: var(--ink-muted);
+}
+
+.quick-nav__input:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+.quick-nav__list {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 10;
+  max-height: 16rem;
+  margin-top: var(--space-2);
+  padding: var(--space-1);
+  overflow-y: auto;
+  list-style: none;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  animation: quick-nav-dropdown 200ms var(--ease-out-quint) both;
+}
+
+.quick-nav__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-xs);
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.quick-nav__option:hover,
+.quick-nav__option--active {
+  background-color: var(--surface-muted);
+  color: var(--ink);
+}
+
+.quick-nav__option-icon {
+  color: var(--ink-muted);
+}
+
+.quick-nav__empty {
+  padding: var(--space-2) var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+}
+
+@keyframes quick-nav-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes quick-nav-dropdown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  .quick-nav__list {
+    animation: none;
+  }
+}

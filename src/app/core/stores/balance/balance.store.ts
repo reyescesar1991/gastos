@@ -35,6 +35,13 @@ export const BalanceStore = signalStore(
             totalBalance: computed(() => store.balance()?.balanceTotal ?? 0),
             income: computed(() => store.balance()?.income ?? 0),
             outcome: computed(() => store.balance()?.outcome ?? 0),
+
+            // Distingue "sin registros" de un valor en cero, para que la vista
+            // pueda mostrar una etiqueta de valor nulo.
+            hasBalance: computed(() => store.balance() !== null),
+
+            // Moneda de los importes; el backend la envía junto al balance.
+            currency: computed(() => store.balance()?.currency ?? 'USD'),
         })
     ),
 

@@ -1,0 +1,30 @@
+<section class="movements" aria-labelledby="movements-title">
+  <h2 class="section-title" id="movements-title">Últimos movimientos</h2>
+
+  @if (isLoading()) {
+    <p class="movements__status">Cargando movimientos…</p>
+  } @else if (!hasMovements()) {
+    <p class="movements__status">Aún no registras movimientos.</p>
+  } @else {
+    <ul class="movements__list">
+      @for (movement of movements(); track movement.id; let index = $index) {
+        <li class="movement" [attr.data-type]="movement.type" [style.--index]="index">
+          <span class="movement__chip" aria-hidden="true">
+            <app-icon [name]="movement.type === 'income' ? 'arrow-up' : 'arrow-down'" size="sm" />
+          </span>
+
+          <div class="movement__body">
+            <p class="movement__description">{{ movement.description }}</p>
+            <p class="movement__meta">
+              <span class="movement__type">{{ typeLabel(movement.type) }}</span>
+              <span class="movement__currency">{{ movement.currency }}</span>
+              <span class="movement__date">{{ date(movement.date) }}</span>
+            </p>
+          </div>
+
+          <p class="movement__amount">{{ amount(movement) }}</p>
+        </li>
+      }
+    </ul>
+  }
+</section>

@@ -1,0 +1,139 @@
+/* ---------------------------------------------------------------------------
+ * Resumen de balance.
+ *
+ * Mobile first: dos columnas con el disponible a lo ancho; desde 768px, tres
+ * columnas simétricas de izquierda a derecha. El acento pastel de cada métrica
+ * se aplica solo al chip y a la tinta del importe: las superficies siguen
+ * blancas con borde de 1px.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: block;
+  animation: balance-summary-reveal var(--duration-reveal) var(--ease-out-quint) both;
+}
+
+.section-title {
+  margin-bottom: var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.summary__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.summary__cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.summary__cell--available {
+  grid-column: 1 / -1;
+}
+
+/* Semaforización: acento por métrica */
+.summary__cell--income {
+  --cell-accent: var(--pale-green);
+  --cell-accent-ink: var(--pale-green-ink);
+}
+
+.summary__cell--outcome {
+  --cell-accent: var(--pale-red);
+  --cell-accent-ink: var(--pale-red-ink);
+}
+
+.summary__cell--available {
+  --cell-accent: var(--pale-blue);
+  --cell-accent-ink: var(--pale-blue-ink);
+}
+
+.summary__chip {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--cell-accent);
+  color: var(--cell-accent-ink);
+}
+
+.summary__label {
+  color: var(--ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.summary__value {
+  color: var(--cell-accent-ink);
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* Sin data: la celda pierde el semáforo y queda la etiqueta de valor nulo */
+.summary__cell--empty .summary__value {
+  color: var(--ink-muted);
+}
+
+.summary__cell--empty .summary__chip {
+  background-color: var(--surface-muted);
+  color: var(--ink-muted);
+}
+
+.summary__empty {
+  margin-top: var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+}
+
+@keyframes balance-summary-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .summary__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .summary__cell {
+    padding: var(--space-6);
+  }
+
+  /* En escritorio las tres celdas van de izquierda a derecha */
+  .summary__cell--available {
+    grid-column: auto;
+  }
+
+  .summary__value {
+    font-size: 1.375rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    animation: none;
+  }
+}
