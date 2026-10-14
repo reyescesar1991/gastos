@@ -4,7 +4,7 @@ import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from '../../app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { apiUrlInterceptor } from '../interceptors/api-url.interceptor';
-import { SessionStore } from '../stores/session.store';
+import { SessionStore } from '../stores/auth/session.store';
 
 export const appConfig: ApplicationConfig = {
   providers: [

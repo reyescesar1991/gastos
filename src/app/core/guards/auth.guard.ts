@@ -1,5 +1,5 @@
 import { CanActivateFn, Router } from "@angular/router";
-import { SessionStore } from "../stores/session.store";
+import { SessionStore } from "../stores/auth/session.store";
 import { inject } from "@angular/core";
 
 

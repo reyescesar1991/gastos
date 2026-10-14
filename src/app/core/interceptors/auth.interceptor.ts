@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { SessionStore } from "../stores/session.store";
+import { SessionStore } from "../stores/auth/session.store";
 
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {

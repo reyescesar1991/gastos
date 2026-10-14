@@ -1,5 +1,5 @@
-import { ApiSuccessResponse } from "../../../core/models/api/api-success.model";
-import { LoginCredentialsResponse } from "../models/login-credentials.model";
+import { ApiSuccessResponse } from "../../../../core/models/api/api-success.model";
+import { LoginCredentialsResponse } from "../../models/login-credentials.model";
 
 export const DUMMy_LOGIN_CREDENTIALS_RESPONSE: ApiSuccessResponse<LoginCredentialsResponse> = {
     statusCode: 200,

@@ -1,15 +1,15 @@
 import { computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import { User } from "../models/user/user.model";
-import { ErrorUtils } from "../utils/error-handler.util";
+import { User } from "../../models/user/user.model";
+import { ErrorUtils } from "../../utils/error-handler.util";
 import { firstValueFrom } from "rxjs";
-import { LoginCredentialsRequest } from "../../features/auth/models/login-credentials.model";
-import { UserMapper } from "../models/user/user.mapper";
-import { AuthApiService } from "../../features/auth/auth-api.service";
-import { RegisterUserRequest } from "../../features/auth/models/register-request.model";
-import { ForgotPasswordRequest } from "../../features/auth/models/forgot-password.model";
-import { ToastService } from "../services/toast-service";
+import { LoginCredentialsRequest } from "../../../features/auth/models/login-credentials.model";
+import { UserMapper } from "../../models/user/user.mapper";
+import { AuthApiService } from "../../../features/auth/auth-api.service";
+import { RegisterUserRequest } from "../../../features/auth/models/register-request.model";
+import { ForgotPasswordRequest } from "../../../features/auth/models/forgot-password.model";
+import { ToastService } from "../../services/toast-service";
 
 // 1. Definimos la interfaz del estado de sesión
 export interface SessionState {

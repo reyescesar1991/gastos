@@ -1,8 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { delay, Observable, of } from "rxjs";
-import { DUMMy_LOGIN_CREDENTIALS_RESPONSE } from "./mocks/loginCredentialsResponse.mock";
-import { SessionStore } from "../../core/stores/session.store";
+import { DUMMy_LOGIN_CREDENTIALS_RESPONSE } from "./mocks/auth/loginCredentialsResponse.mock";
 import { LoginCredentialsRequest, LoginCredentialsResponse } from "./models/login-credentials.model";
 import { RegisterUserRequest } from "./models/register-request.model";
 import { ApiSuccessResponse } from "../../core/models/api/api-success.model";
