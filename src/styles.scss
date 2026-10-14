@@ -1,3 +1,38 @@
+/* Tema oscuro.
+ *
+ * Mismos tokens, valores invertidos: el atributo `data-theme="dark"` en <html>
+ * lo escribe el componente raíz a partir de la preferencia guardada en la store
+ * de sesión. Ningún componente necesita saber del cambio: todos consumen estas
+ * variables. Se mantienen las reglas de la skill: sin blanco ni negro absolutos,
+ * sin degradados y con los acentos pastel en versión profunda más su tinta clara.
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Superficies */
+  --canvas: #141412;
+  --surface: #1c1b19;
+  --surface-muted: #23221f;
+  --border: #2f2e2b;
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  /* Tinta (nunca blanco absoluto) */
+  --ink: #f2f1ec;
+  --ink-soft: #d9d7d1;
+  --ink-muted: #9c998f;
+  --ink-inverse: #141412;
+
+  /* Acentos pastel: fondo profundo + texto claro con contraste suficiente */
+  --pale-red: #3a2324;
+  --pale-red-ink: #f0b4b2;
+  --pale-blue: #1d2b36;
+  --pale-blue-ink: #a9d3ef;
+  --pale-green: #1f2a21;
+  --pale-green-ink: #b3d6b6;
+  --pale-yellow: #302a19;
+  --pale-yellow-ink: #e3c98a;
+}
+
 /* ---------------------------------------------------------------------------
  * Tokens globales de la app.
  *
@@ -8,6 +43,8 @@
  * ------------------------------------------------------------------------- */
 
 :root {
+  color-scheme: light;
+
   /* Superficies */
   --canvas: #f7f6f3;
   --surface: #ffffff;

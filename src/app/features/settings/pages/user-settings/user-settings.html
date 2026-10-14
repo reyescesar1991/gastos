@@ -1,0 +1,71 @@
+<section class="settings">
+  <header class="settings__intro">
+    <span class="settings__tag">Configuración</span>
+    <h1 class="settings__title">Tu cuenta</h1>
+    <p class="settings__subtitle">
+      Ajusta cómo se ve la app. Los cambios se aplican al instante y quedan guardados en este
+      dispositivo.
+    </p>
+  </header>
+
+  <section class="theme" aria-labelledby="theme-title">
+    <h2 class="section-title" id="theme-title">Tema de la app</h2>
+
+    <div class="theme__options" role="radiogroup" aria-labelledby="theme-title">
+      @for (option of themeOptions; track option.value; let index = $index) {
+        <button
+          class="theme__option"
+          [class.theme__option--selected]="isSelected(option.value)"
+          type="button"
+          role="radio"
+          [attr.aria-checked]="isSelected(option.value)"
+          [style.--index]="index"
+          (click)="onSelectTheme(option.value)"
+        >
+          <span class="theme__chip" aria-hidden="true">
+            <app-icon [name]="option.icon" size="sm" />
+          </span>
+
+          <span class="theme__body">
+            <span class="theme__label">{{ option.label }}</span>
+            <span class="theme__description">{{ option.description }}</span>
+          </span>
+
+          @if (isSelected(option.value)) {
+            <span class="theme__state">Elegido</span>
+          }
+        </button>
+      }
+    </div>
+
+    <p class="theme__note">
+      {{ sessionStore.theme() === 'system'
+        ? 'Siguiendo al sistema: ' + resolvedLabel()
+        : 'Tema aplicado: ' + resolvedLabel() }}
+    </p>
+  </section>
+
+  <section class="account" aria-labelledby="account-title">
+    <h2 class="section-title" id="account-title">Datos de la cuenta</h2>
+
+    <dl class="account__list">
+      <div class="account__row">
+        <dt class="account__label">Nombre</dt>
+        <dd class="account__value">{{ sessionStore.nameUser() }}</dd>
+      </div>
+      <div class="account__row">
+        <dt class="account__label">Correo</dt>
+        <dd class="account__value">{{ sessionStore.user()?.email ?? '—' }}</dd>
+      </div>
+      <div class="account__row">
+        <dt class="account__label">Usuario</dt>
+        <dd class="account__value">{{ sessionStore.user()?.username ?? '—' }}</dd>
+      </div>
+    </dl>
+
+    <p class="account__note">
+      El cambio de imagen de perfil llega con el endpoint de perfil; por ahora se muestra la
+      guardada al iniciar sesión.
+    </p>
+  </section>
+</section>

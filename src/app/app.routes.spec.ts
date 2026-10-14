@@ -1,3 +1,4 @@
+import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { App } from './app';
@@ -26,7 +27,7 @@ describe('Rutas de la app', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes)],
+      providers: [provideHttpClient(), provideRouter(routes)],
     }).compileComponents();
 
     router = TestBed.inject(Router);
@@ -39,6 +40,14 @@ describe('Rutas de la app', () => {
     expect(compiled.querySelector('app-header')).not.toBeNull();
     expect(compiled.querySelector('app-nav-menu')).not.toBeNull();
     expect(compiled.querySelector('app-dashboard')).not.toBeNull();
+  });
+
+  it('monta la configuración de usuario dentro del layout', async () => {
+    const compiled = await navigateTo('/configuracion');
+
+    expect(compiled.querySelector('app-header')).not.toBeNull();
+    expect(compiled.querySelector('app-user-settings')).not.toBeNull();
+    expect(compiled.querySelector('app-user-settings .theme__option')).not.toBeNull();
   });
 
   it('no monta el layout en las pantallas de autenticación', async () => {

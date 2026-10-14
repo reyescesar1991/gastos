@@ -3,7 +3,10 @@ import { Router, provideRouter } from '@angular/router';
 import { patchState } from '@ngrx/signals';
 import { unprotected } from '@ngrx/signals/testing';
 import { NavStore } from '../../../../core/stores/navigation/nav.store';
-import { NAVIGATION_IDS } from '../../../../shared/components/nav-menu/mocks/navigation-menu.mock';
+import {
+  NAVIGATION_IDS,
+  NAVIGATION_MENU_MOCK,
+} from '../../../../shared/components/nav-menu/mocks/navigation-menu.mock';
 import { NavigationItem } from '../../../../shared/models/navigation/navigation-item.model';
 import { QuickNav } from './quick-nav';
 
@@ -47,6 +50,13 @@ describe('QuickNav', () => {
   });
 
   it('avisa que no hay opciones mientras el menú no tenga ninguna habilitada', () => {
+    // El mock ya trae habilitada la configuración de usuario, así que acá se
+    // desactivan todas para ejercitar el estado vacío.
+    patchState(unprotected(navStore), {
+      items: NAVIGATION_MENU_MOCK.map((item) => ({ ...item, enabled: false })),
+    });
+    fixture.detectChanges();
+
     input().dispatchEvent(new Event('focus'));
     fixture.detectChanges();
 
@@ -82,6 +92,23 @@ describe('QuickNav', () => {
     expect(navigate).toHaveBeenCalledWith('/movimientos');
     expect(input().getAttribute('aria-expanded')).toBe('false');
     expect(input().value).toBe('');
+  });
+
+  it('ofrece la configuración de usuario, la única opción habilitada del mock', () => {
+    const navigate = vi.spyOn(router, 'navigateByUrl');
+
+    input().dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+
+    const options = fixture.nativeElement.querySelectorAll('.quick-nav__option');
+
+    expect(options.length).toBe(1);
+    expect(options[0].textContent).toContain('Configuración de usuario');
+
+    (options[0] as HTMLElement).click();
+    fixture.detectChanges();
+
+    expect(navigate).toHaveBeenCalledWith('/configuracion');
   });
 
   it('cierra el desplegable con Escape', () => {

@@ -10,11 +10,14 @@ import { AuthApiService } from "../../../features/auth/auth-api.service";
 import { RegisterUserRequest } from "../../../features/auth/models/register-request.model";
 import { ForgotPasswordRequest } from "../../../features/auth/models/forgot-password.model";
 import { ToastService } from "../../services/toast-service";
+import { DEFAULT_THEME, THEME_STORAGE_KEY, THEMES, ResolvedTheme, Theme } from "../../models/theme/theme.model";
+import { prefersDarkScheme } from "../../utils/media-query.util";
 
 // 1. Definimos la interfaz del estado de sesión
 export interface SessionState {
     user: User | null;
     token: string | null;
+    theme: Theme;
     isLoading: boolean;
     error: string | null;
     successMessage: string | null;
@@ -24,6 +27,7 @@ export interface SessionState {
 const initialState: SessionState = {
     user: null,
     token: null,
+    theme: DEFAULT_THEME,
     isLoading: false,
     error: null,
     successMessage: null,
@@ -38,6 +42,16 @@ export const SessionStore = signalStore(
         (store) => ({
             isLoggedIn: computed(() => !!store.token() && !!store.user()),
             nameUser: computed(() => store.user()?.name ?? 'Anónimo'),
+
+            // Tema efectivo a aplicar: cuando el usuario delega en el sistema,
+            // se resuelve con la media query del sistema operativo.
+            resolvedTheme: computed<ResolvedTheme>(() => {
+                const theme = store.theme();
+
+                return theme === 'system'
+                    ? (prefersDarkScheme() ? 'dark' : 'light')
+                    : theme;
+            }),
         })
     ),
 
@@ -161,6 +175,14 @@ export const SessionStore = signalStore(
    * Restaura la sesión desde el localStorage al iniciar la app
    */
             initSession(): void {
+                // El tema se restaura siempre, haya sesión o no: la pantalla de
+                // login tambien debe respetar la preferencia guardada.
+                const theme = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
+
+                if (theme !== null && THEMES.includes(theme)) {
+                    patchState(store, { theme });
+                }
+
                 const token = localStorage.getItem('auth_token');
                 const userJson = localStorage.getItem('auth_user');
 
@@ -181,8 +203,28 @@ export const SessionStore = signalStore(
                 localStorage.removeItem('auth_token');
                 localStorage.removeItem('auth_user');
 
-                patchState(store, initialState);
+                // Solo se resetea el estado de sesión: el tema es una
+                // preferencia del dispositivo, no de la sesión, así que sobrevive
+                // al cierre de sesión.
+                patchState(store, {
+                    user: null,
+                    token: null,
+                    isLoading: false,
+                    error: null,
+                    successMessage: null,
+                });
+
                 router.navigate(['/auth/login']);
+            },
+
+            /**
+             * Cambia el tema de la app y lo persiste en el dispositivo.
+             *
+             * @param theme Preferencia elegida por el usuario.
+             */
+            setTheme(theme: Theme): void {
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+                patchState(store, { theme });
             },
 
             setError(error: string): void {

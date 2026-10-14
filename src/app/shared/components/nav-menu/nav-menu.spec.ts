@@ -65,11 +65,26 @@ describe('NavMenu', () => {
     ]);
   });
 
-  it('deja las opciones deshabilitadas mientras no tengan vista', () => {
+  it('deja deshabilitadas las opciones que todavía no tienen vista', () => {
+    const disabled = links().filter((link) => link.disabled);
+
     expect(links().length).toBe(4);
-    expect(links().every((link) => link.disabled)).toBe(true);
-    expect(links().every((link) => link.getAttribute('aria-disabled') === 'true')).toBe(true);
-    expect(fixture.nativeElement.querySelectorAll('.nav-menu__state').length).toBe(4);
+    expect(disabled.length).toBe(3);
+    expect(disabled.every((link) => link.getAttribute('aria-disabled') === 'true')).toBe(true);
+    expect(fixture.nativeElement.querySelectorAll('.nav-menu__state').length).toBe(3);
+  });
+
+  it('navega a la opción habilitada sin marca de inactividad', () => {
+    const navigate = vi.spyOn(router, 'navigateByUrl');
+    const settings = links()[3];
+
+    expect(settings.disabled).toBe(false);
+    expect(settings.getAttribute('aria-disabled')).toBeNull();
+    expect(settings.textContent).toContain('Configuración de usuario');
+
+    settings.click();
+
+    expect(navigate).toHaveBeenCalledWith('/configuracion');
   });
 
   it('oculta el panel y lo despliega cuando el store abre el menú', async () => {

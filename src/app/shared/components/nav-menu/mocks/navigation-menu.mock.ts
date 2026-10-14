@@ -17,10 +17,11 @@ export const NAVIGATION_IDS = {
 /**
  * Data dummy del menú de navegación.
  *
- * Las cuatro opciones viajan con `enabled: false` mientras sus vistas no
- * existan: el menú las muestra atenuadas y sin navegar. Al crear la ruta
- * correspondiente basta con poner el ítem en `true` para activar la opción, el
- * estado seleccionado y los accesos rápidos que la consumen.
+ * Cada opción viaja con `enabled` según exista o no su vista: las que todavía
+ * no existen se muestran atenuadas y sin navegar. "Configuración de usuario" ya
+ * está habilitada; al crear la ruta de las demás basta con poner el ítem en
+ * `true` para activar la opción, el estado seleccionado y los accesos rápidos
+ * que la consumen.
  */
 export const NAVIGATION_MENU_MOCK: NavigationItem[] = [
 
@@ -50,6 +51,6 @@ export const NAVIGATION_MENU_MOCK: NavigationItem[] = [
         label: 'Configuración de usuario',
         icon: 'gear',
         route: '/configuracion',
-        enabled: false,
+        enabled: true,
     },
 ];

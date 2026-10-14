@@ -2,18 +2,19 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { patchState } from '@ngrx/signals';
 import { unprotected } from '@ngrx/signals/testing';
+import { ToastService } from '../../../core/services/toast-service';
 import { SessionStore } from '../../../core/stores/auth/session.store';
 import { NavStore } from '../../../core/stores/navigation/nav.store';
-import { ToastService } from '../../../core/services/toast-service';
-import { AppHeader } from './app-header';
 import { NAVIGATION_IDS } from '../nav-menu/mocks/navigation-menu.mock';
+import { AppHeader } from './app-header';
 
 /**
  * Pruebas del header.
  *
  * Cubren los tres elementos pedidos (nombre, avatar y cierre de sesión) más el
- * comportamiento de la hamburguesa y el aviso cuando la configuración de
- * usuario todavía no está disponible.
+ * comportamiento de la hamburguesa y el destino del avatar: navega a la
+ * configuración de usuario cuando la opción está habilitada y avisa con un toast
+ * cuando todavía no lo está.
  */
 describe('AppHeader', () => {
   let fixture: ComponentFixture<AppHeader>;
@@ -21,11 +22,21 @@ describe('AppHeader', () => {
   let navStore: InstanceType<typeof NavStore>;
   let router: Router;
 
+  /** Texto del nombre mostrado en el header. */
   function name(): string {
-    return (fixture.nativeElement.querySelector('.app-header__name') as HTMLElement).textContent?.trim() ?? '';
+    const element = fixture.nativeElement.querySelector('.app-header__name') as HTMLElement;
+
+    return element.textContent?.trim() ?? '';
+  }
+
+  /** Botón de identidad (avatar + nombre). */
+  function identity(): HTMLButtonElement {
+    return fixture.nativeElement.querySelector('.app-header__identity') as HTMLButtonElement;
   }
 
   beforeEach(async () => {
+    localStorage.clear();
+
     await TestBed.configureTestingModule({
       imports: [AppHeader],
       providers: [provideRouter([{ path: 'configuracion', children: [] }])],
@@ -91,24 +102,16 @@ describe('AppHeader', () => {
     expect(menuButton.getAttribute('aria-expanded')).toBe('true');
   });
 
-  it('avisa por toast cuando la configuración de usuario no está disponible', async () => {
-    const toastService = TestBed.inject(ToastService);
-    const info = vi.spyOn(toastService, 'info');
+  it('navega a la configuración de usuario, que ya está habilitada', async () => {
     const navigate = vi.spyOn(router, 'navigateByUrl');
 
-    const identity = fixture.nativeElement.querySelector(
-      '.app-header__identity',
-    ) as HTMLButtonElement;
-    identity.click();
+    identity().click();
     await fixture.whenStable();
 
-    expect(info).toHaveBeenCalledWith('Aún no disponible: Configuración de usuario', {
-      duration: 4000,
-    });
-    expect(navigate).not.toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith('/configuracion');
   });
 
-  it('navega a la configuración cuando esa opción está habilitada', async () => {
+  it('avisa por toast cuando la configuración de usuario no está disponible', async () => {
     patchState(unprotected(navStore), {
       items: [
         {
@@ -116,21 +119,23 @@ describe('AppHeader', () => {
           label: 'Configuración de usuario',
           icon: 'gear',
           route: '/configuracion',
-          enabled: true,
+          enabled: false,
         },
       ],
     });
     await fixture.whenStable();
 
+    const toastService = TestBed.inject(ToastService);
+    const info = vi.spyOn(toastService, 'info');
     const navigate = vi.spyOn(router, 'navigateByUrl');
-    const identity = fixture.nativeElement.querySelector(
-      '.app-header__identity',
-    ) as HTMLButtonElement;
 
-    identity.click();
+    identity().click();
     await fixture.whenStable();
 
-    expect(navigate).toHaveBeenCalledWith('/configuracion');
+    expect(info).toHaveBeenCalledWith('Aún no disponible: Configuración de usuario', {
+      duration: 4000,
+    });
+    expect(navigate).not.toHaveBeenCalled();
   });
 
   it('cierra la sesión y vuelve al login', async () => {

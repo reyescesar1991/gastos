@@ -12,7 +12,10 @@ export type IconName =
   | 'chevron-down'
   | 'search'
   | 'arrow-up'
-  | 'arrow-down';
+  | 'arrow-down'
+  | 'sun'
+  | 'moon'
+  | 'monitor';
 
 /** Tamaños soportados por el icono. */
 export type IconSize = 'sm' | 'md' | 'lg';

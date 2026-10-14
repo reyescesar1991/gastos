@@ -158,6 +158,13 @@ describe('Dashboard', () => {
   it('avisa en la navegación rápida cuando no hay opciones habilitadas', async () => {
     const fixture = await render(true);
 
+    // El mock ya trae habilitada la configuración de usuario, así que acá se
+    // desactivan todas para ejercitar el estado vacío.
+    patchState(unprotected(navStore), {
+      items: NAVIGATION_MENU_MOCK.map((item) => ({ ...item, enabled: false })),
+    });
+    fixture.detectChanges();
+
     const input = quickNavInput(fixture);
 
     input.dispatchEvent(new Event('focus'));

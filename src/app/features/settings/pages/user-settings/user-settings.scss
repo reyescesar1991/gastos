@@ -1,0 +1,245 @@
+/* ---------------------------------------------------------------------------
+ * Configuración de usuario.
+ *
+ * Mobile first: una columna con las opciones de tema apiladas; desde 768px pasan
+ * a tres columnas. La opción elegida se marca con acento pastel y tag, sin
+ * sombras ni degradados. Todo consume los tokens globales, así que el tema
+ * oscuro funciona sin cambios acá.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: block;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: var(--space-2) var(--space-4) var(--space-10);
+}
+
+/* Intro editorial: tag + titular serif + entradilla atenuada */
+.settings__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: settings-reveal var(--duration-reveal) var(--ease-out-quint) both;
+}
+
+.settings__tag {
+  align-self: flex-start;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-pill);
+  background-color: var(--pale-blue);
+  color: var(--pale-blue-ink);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.settings__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.settings__subtitle {
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+}
+
+.section-title {
+  margin-bottom: var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* --- Selector de tema ---------------------------------------------------- */
+
+.theme {
+  animation: settings-reveal var(--duration-reveal) var(--ease-out-quint) 80ms both;
+}
+
+.theme__options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+.theme__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  animation: settings-reveal var(--duration-reveal) var(--ease-out-quint)
+    calc(var(--index, 0) * 80ms) both;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.theme__option:hover {
+  border-color: var(--border-strong);
+}
+
+/* Opción elegida: borde marcado, chip con acento azul pastel y tag de estado */
+.theme__option--selected {
+  border-color: var(--pale-blue-ink);
+  background-color: var(--surface-muted);
+}
+
+.theme__chip {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-muted);
+  color: var(--ink-muted);
+}
+
+.theme__option--selected .theme__chip {
+  background-color: var(--pale-blue);
+  color: var(--pale-blue-ink);
+}
+
+.theme__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.theme__label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.theme__description {
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+}
+
+.theme__state {
+  flex: 0 0 auto;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-pill);
+  background-color: var(--pale-blue);
+  color: var(--pale-blue-ink);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.theme__note {
+  margin-top: var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+}
+
+/* --- Datos de la cuenta -------------------------------------------------- */
+
+.account {
+  animation: settings-reveal var(--duration-reveal) var(--ease-out-quint) 160ms both;
+}
+
+.account__list {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.account__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.account__row:last-child {
+  border-bottom: none;
+}
+
+.account__label {
+  color: var(--ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.account__value {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.account__note {
+  margin-top: var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+}
+
+@keyframes settings-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .settings {
+    gap: var(--space-10);
+    padding: var(--space-4) var(--space-8) var(--space-10);
+  }
+
+  .theme__options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .theme__option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings__intro,
+  .theme,
+  .theme__option,
+  .account {
+    animation: none;
+  }
+}
