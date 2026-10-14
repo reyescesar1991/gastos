@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { inject } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { delay, Observable, of } from "rxjs";
 import { DUMMy_LOGIN_CREDENTIALS_RESPONSE } from "./mocks/auth/loginCredentialsResponse.mock";
 import { LoginCredentialsRequest, LoginCredentialsResponse } from "./models/login-credentials.model";
@@ -8,6 +8,11 @@ import { ApiSuccessResponse } from "../../core/models/api/api-success.model";
 import { ForgotPasswordRequest } from "./models/forgot-password.model";
 
 
+/**
+ * API de autenticación. Con `useMock` en true responde con la data dummy de
+ * login/registro; al apagarlo consume `/auth/*` del backend real.
+ */
+@Injectable({ providedIn: 'root' })
 export class AuthApiService {
 
     private readonly httpClient = inject(HttpClient);
