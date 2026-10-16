@@ -76,7 +76,16 @@ export const MovementsStore = signalStore(
             return {
                 getMovements,
 
-                async addMovement(request: AddMovementRequest): Promise<void> {
+                /**
+                 * Registra un movimiento y refresca la lista.
+                 *
+                 * @param request Movimiento ya mapeado al contrato del API.
+                 * @returns `true` si el API confirmó el registro, `false` si falló.
+                 * El formulario necesita ese resultado para decidir si ofrece
+                 * registrar otro movimiento o redirigir: el error ya se avisa con
+                 * toast, así que no se relanza.
+                 */
+                async addMovement(request: AddMovementRequest): Promise<boolean> {
 
                     patchState(store, { isLoading: true, error: null, successMessage: null });
 
@@ -93,11 +102,27 @@ export const MovementsStore = signalStore(
 
                         toastService.success(response.message, { duration: 4000 });
 
+                        return true;
+
                     } catch (err) {
                         const errorMessage = ErrorUtils.getErrorMessage(err);
+
                         patchState(store, { error: errorMessage, isLoading: false });
+
                         toastService.error(errorMessage, { duration: 5000 });
+
+                        return false;
                     }
+                },
+
+                /**
+                 * Limpia los mensajes de la última operación.
+                 *
+                 * Se llama al limpiar el formulario y al encadenar otro movimiento: el
+                 * aviso del movimiento anterior no debe seguir visible.
+                 */
+                resetFeedback(): void {
+                    patchState(store, { error: null, successMessage: null });
                 }
             };
         }

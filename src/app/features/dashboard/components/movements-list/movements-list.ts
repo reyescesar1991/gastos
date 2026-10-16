@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import type { Movement } from '../../../../core/models/movements/movement.model';
 import { AppIcon } from '../../../../shared/components/app-icon/app-icon';
-import { formatAmount, formatDate } from '../../utils/format.util';
+import { formatAmount, formatDate } from '../../../../shared/utils/format.util';
 
 /**
  * Lista de últimos movimientos.

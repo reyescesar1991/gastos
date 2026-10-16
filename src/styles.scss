@@ -1,3 +1,19 @@
+/* ---------------------------------------------------------------------------
+ * Overlay del CDK (diálogos).
+ *
+ * El CDK trae el comportamiento del modal —velo, trap de foco, `Escape`, foco
+ * al abrir y devolución del foco al cerrar— pero no sus estilos estructurales:
+ * sin este mixin el diálogo no se posiciona ni anima. El velo se repinta con el
+ * token `--scrim` para que siga el tema de la app y no el negro fijo del CDK.
+ * ------------------------------------------------------------------------- */
+@use '@angular/cdk' as cdk;
+
+@include cdk.overlay();
+
+.cdk-overlay-backdrop.cdk-overlay-dark-backdrop {
+  background-color: var(--scrim);
+}
+
 /* Tema oscuro.
  *
  * Mismos tokens, valores invertidos: el atributo `data-theme="dark"` en <html>
@@ -21,6 +37,9 @@
   --ink-soft: #d9d7d1;
   --ink-muted: #9c998f;
   --ink-inverse: #141412;
+
+  /* Velo de los diálogos modales: oscuro y cálido, nunca negro puro */
+  --scrim: rgba(12, 12, 11, 0.62);
 
   /* Acentos pastel: fondo profundo + texto claro con contraste suficiente */
   --pale-red: #3a2324;
@@ -57,6 +76,9 @@
   --ink-soft: #2f3437;
   --ink-muted: #787774;
   --ink-inverse: #ffffff;
+
+  /* Velo de los diálogos modales: oscuro y cálido, nunca negro puro */
+  --scrim: rgba(20, 20, 18, 0.4);
 
   /* Acentos pastel: fondo + texto con contraste suficiente */
   --pale-red: #fdebec;

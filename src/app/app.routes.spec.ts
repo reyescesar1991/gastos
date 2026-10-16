@@ -50,6 +50,20 @@ describe('Rutas de la app', () => {
     expect(compiled.querySelector('app-user-settings .theme__option')).not.toBeNull();
   });
 
+  it('monta el registro de movimiento dentro del layout', async () => {
+    const compiled = await navigateTo('/movimientos/nuevo');
+
+    expect(compiled.querySelector('app-header')).not.toBeNull();
+    expect(compiled.querySelector('app-nav-menu')).not.toBeNull();
+    expect(compiled.querySelector('app-add-movement')).not.toBeNull();
+  });
+
+  it('redirige la raíz del módulo de movimientos a su registro', async () => {
+    await navigateTo('/movimientos');
+
+    expect(router.url).toBe('/movimientos/nuevo');
+  });
+
   it('no monta el layout en las pantallas de autenticación', async () => {
     const compiled = await navigateTo('/auth/login');
 

@@ -1,1 +1,184 @@
-<p>add-movement works!</p>
+<section class="movement">
+  <header class="movement__intro">
+    <span class="movement__tag">Registro</span>
+    <h1 class="movement__title">Registrar movimiento</h1>
+    <p class="movement__subtitle">
+      Anota un gasto o un ingreso. Queda en tus últimos movimientos y en tu resumen.
+    </p>
+  </header>
+
+  @if (movementsStore.error(); as error) {
+    <p class="movement__alert" role="alert">{{ error }}</p>
+  }
+
+  <form class="movement__card" novalidate (submit)="onSubmit($event)">
+    <fieldset class="field">
+      <legend class="field__label">Tipo</legend>
+
+      <div class="segmented">
+        @for (option of typeOptions; track option.value) {
+          <label class="segmented__option" [attr.data-type]="option.value">
+            <input
+              class="segmented__input"
+              type="radio"
+              [value]="option.value"
+              [formField]="movementForm.type"
+            />
+            <span class="segmented__label">{{ option.label }}</span>
+          </label>
+        }
+      </div>
+
+      @if (movementForm.type().touched() && movementForm.type().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of movementForm.type().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </fieldset>
+
+    <div class="movement__row">
+      <div class="field">
+        <label class="field__label" for="amount">Importe</label>
+        <input
+          class="field__input field__input--number"
+          id="amount"
+          type="number"
+          inputmode="decimal"
+          step="0.01"
+          autocomplete="off"
+          [attr.aria-invalid]="movementForm.amount().touched() && movementForm.amount().invalid()"
+          [class.field__input--invalid]="
+            movementForm.amount().touched() && movementForm.amount().invalid()
+          "
+          [formField]="movementForm.amount"
+        />
+        @if (movementForm.amount().touched() && movementForm.amount().invalid()) {
+          <ul class="field__errors" role="alert">
+            @for (error of movementForm.amount().errors(); track $index) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="currency">Moneda</label>
+        <select class="field__input" id="currency" [formField]="movementForm.currency">
+          @for (currency of currencies; track currency) {
+            <option [value]="currency">{{ currency }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field__row">
+        <label class="field__label" for="description">Descripción</label>
+        <span class="field__counter" id="description-counter">
+          {{ movementModel().description.length }}/{{ descriptionMaxLength }}
+        </span>
+      </div>
+      <input
+        class="field__input"
+        id="description"
+        #descriptionInput
+        type="text"
+        autocomplete="off"
+        aria-describedby="description-counter"
+        [attr.aria-invalid]="
+          movementForm.description().touched() && movementForm.description().invalid()
+        "
+        [class.field__input--invalid]="
+          movementForm.description().touched() && movementForm.description().invalid()
+        "
+        [formField]="movementForm.description"
+      />
+      @if (movementForm.description().touched() && movementForm.description().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of movementForm.description().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="movement__row">
+      <div class="field">
+        <label class="field__label" for="date">Fecha</label>
+        <input
+          class="field__input"
+          id="date"
+          type="date"
+          [attr.aria-invalid]="movementForm.date().touched() && movementForm.date().invalid()"
+          [class.field__input--invalid]="
+            movementForm.date().touched() && movementForm.date().invalid()
+          "
+          [formField]="movementForm.date"
+        />
+        @if (movementForm.date().touched() && movementForm.date().invalid()) {
+          <ul class="field__errors" role="alert">
+            @for (error of movementForm.date().errors(); track $index) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="field">
+        <div class="field__row">
+          <label class="field__label" for="category">Categoría (opcional)</label>
+          <span class="field__counter" id="category-counter">
+            {{ movementModel().category.length }}/{{ categoryMaxLength }}
+          </span>
+        </div>
+        <input
+          class="field__input"
+          id="category"
+          type="text"
+          autocomplete="off"
+          list="movement-categories"
+          aria-describedby="category-counter"
+          [attr.aria-invalid]="
+            movementForm.category().touched() && movementForm.category().invalid()
+          "
+          [class.field__input--invalid]="
+            movementForm.category().touched() && movementForm.category().invalid()
+          "
+          [formField]="movementForm.category"
+        />
+        <datalist id="movement-categories">
+          @for (category of categories; track category) {
+            <option [value]="category"></option>
+          }
+        </datalist>
+        @if (movementForm.category().touched() && movementForm.category().invalid()) {
+          <ul class="field__errors" role="alert">
+            @for (error of movementForm.category().errors(); track $index) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+
+    <div class="movement__actions">
+      <button class="btn" type="submit" [disabled]="movementForm().invalid() || isSaving()">
+        {{ isSaving() ? 'Guardando…' : 'Guardar movimiento' }}
+      </button>
+      <button class="btn btn--ghost" type="button" (click)="onClear()">Limpiar</button>
+    </div>
+
+    @if (movementForm().invalid()) {
+      <p class="movement__hint">
+        Completa la descripción y un importe mayor que cero para poder guardar.
+      </p>
+    }
+
+    <p class="movement__footer">
+      <a class="movement__link" routerLink="/dashboard">Volver al resumen</a>
+    </p>
+  </form>
+
+</section>

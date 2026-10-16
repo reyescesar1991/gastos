@@ -18,10 +18,10 @@ export const NAVIGATION_IDS = {
  * Data dummy del menú de navegación.
  *
  * Cada opción viaja con `enabled` según exista o no su vista: las que todavía
- * no existen se muestran atenuadas y sin navegar. "Configuración de usuario" ya
- * está habilitada; al crear la ruta de las demás basta con poner el ítem en
- * `true` para activar la opción, el estado seleccionado y los accesos rápidos
- * que la consumen.
+ * no existen se muestran atenuadas y sin navegar. "Agregar movimiento" y
+ * "Configuración de usuario" ya están habilitadas; al crear la ruta de las demás
+ * basta con poner el ítem en `true` para activar la opción, el estado
+ * seleccionado y los accesos rápidos que la consumen.
  */
 export const NAVIGATION_MENU_MOCK: NavigationItem[] = [
 
@@ -30,7 +30,7 @@ export const NAVIGATION_MENU_MOCK: NavigationItem[] = [
         label: 'Agregar movimiento',
         icon: 'plus',
         route: '/movimientos/nuevo',
-        enabled: false,
+        enabled: true,
     },
     {
         id: NAVIGATION_IDS.movementList,

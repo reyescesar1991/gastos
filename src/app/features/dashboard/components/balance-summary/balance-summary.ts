@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import type { Balance } from '../../../../core/models/balance/balance.model';
 import { AppIcon } from '../../../../shared/components/app-icon/app-icon';
-import { formatAmount } from '../../utils/format.util';
+import { formatAmount } from '../../../../shared/utils/format.util';
 
 /**
  * Resumen de balance en tres celdas.

@@ -34,7 +34,7 @@ describe('MovementsList', () => {
       amount: 100,
       description: 'Pago de servicios',
       date: '2023-07-05',
-      type: 'outcome',
+      type: 'expense',
       category: 'Servicios',
       currency: 'USD',
     },
@@ -82,7 +82,7 @@ describe('MovementsList', () => {
     const rows = Array.from(fixture.nativeElement.querySelectorAll('.movement')) as HTMLElement[];
 
     expect(rows.length).toBe(2);
-    expect(rows[0].getAttribute('data-type')).toBe('outcome');
+    expect(rows[0].getAttribute('data-type')).toBe('expense');
     expect(rows[0].querySelector('.movement__description')?.textContent).toBe('Pago de servicios');
     expect(rows[0].querySelector('.movement__type')?.textContent).toBe('Egreso');
     expect(rows[0].querySelector('.movement__currency')?.textContent).toBe('USD');

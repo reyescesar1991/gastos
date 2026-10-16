@@ -66,12 +66,16 @@ describe('NavMenu', () => {
   });
 
   it('deja deshabilitadas las opciones que todavía no tienen vista', () => {
+    // Del mock, "Agregar movimiento" (módulo de movimientos) y "Configuración de
+    // usuario" ya tienen vista; "Ver movimientos" y "Agregar método de pago" no.
     const disabled = links().filter((link) => link.disabled);
 
     expect(links().length).toBe(4);
-    expect(disabled.length).toBe(3);
+    expect(disabled.length).toBe(2);
+    expect(disabled.map((link) => link.textContent).join(' ')).toContain('Ver movimientos');
+    expect(disabled.map((link) => link.textContent).join(' ')).toContain('Agregar método de pago');
     expect(disabled.every((link) => link.getAttribute('aria-disabled') === 'true')).toBe(true);
-    expect(fixture.nativeElement.querySelectorAll('.nav-menu__state').length).toBe(3);
+    expect(fixture.nativeElement.querySelectorAll('.nav-menu__state').length).toBe(2);
   });
 
   it('navega a la opción habilitada sin marca de inactividad', () => {

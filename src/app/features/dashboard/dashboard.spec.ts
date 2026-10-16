@@ -135,7 +135,7 @@ describe('Dashboard', () => {
     expect((rows[0].querySelector('.movement__description') as HTMLElement).textContent).toBe(
       'Pago de servicios',
     );
-    expect(rows[0].getAttribute('data-type')).toBe('outcome');
+    expect(rows[0].getAttribute('data-type')).toBe('expense');
     expect(rows[0].querySelector('.movement__type')?.textContent).toBe('Egreso');
     expect(rows[0].querySelector('.movement__currency')?.textContent).toBe('USD');
     expect((rows[0].querySelector('.movement__amount') as HTMLElement).textContent).toContain('100');
@@ -227,6 +227,15 @@ describe('Dashboard', () => {
   it('deja el acceso rápido deshabilitado con la etiqueta Próximamente', async () => {
     const fixture = await render(true);
 
+    // El módulo de movimientos ya existe, así que el estado deshabilitado se
+    // fuerza acá: es lo que vería la vista mientras el ítem no estuviera activo.
+    patchState(unprotected(navStore), {
+      items: NAVIGATION_MENU_MOCK.map((item) =>
+        item.id === NAVIGATION_IDS.movementAdd ? { ...item, enabled: false } : item,
+      ),
+    });
+    fixture.detectChanges();
+
     const button = fixture.nativeElement.querySelector(
       '.quick-action__button',
     ) as HTMLButtonElement;
@@ -237,15 +246,8 @@ describe('Dashboard', () => {
     ).toBe('Próximamente');
   });
 
-  it('navega a registrar movimiento cuando la opción está habilitada', async () => {
+  it('navega a registrar movimiento con la opción que ya trae el menú', async () => {
     const fixture = await render(true);
-
-    patchState(unprotected(navStore), {
-      items: NAVIGATION_MENU_MOCK.map((item) =>
-        item.id === NAVIGATION_IDS.movementAdd ? { ...item, enabled: true } : item,
-      ),
-    });
-    fixture.detectChanges();
 
     const navigate = vi.spyOn(router, 'navigateByUrl');
     const button = fixture.nativeElement.querySelector(

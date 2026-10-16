@@ -1,0 +1,32 @@
+<h2 class="confirm__title">{{ data.title }}</h2>
+
+@if (view.message; as message) {
+  <p class="confirm__message">{{ message }}</p>
+}
+
+@if (view.facts.length > 0) {
+  <dl class="facts">
+    @for (fact of view.facts; track fact.label) {
+      <div class="facts__row">
+        <dt class="facts__term">{{ fact.label }}</dt>
+        <dd
+          class="facts__value"
+          [class.facts__value--mono]="fact.mono === true"
+          [attr.data-tone]="fact.tone ?? null"
+          [attr.data-fact]="fact.label"
+        >
+          {{ fact.value }}
+        </dd>
+      </div>
+    }
+  </dl>
+}
+
+<div class="confirm__actions">
+  <button class="confirm__button confirm__button--cancel" type="button" (click)="onCancel()">
+    {{ data.cancelLabel ?? 'Cancelar' }}
+  </button>
+  <button class="confirm__button confirm__button--confirm" type="button" (click)="onConfirm()">
+    {{ data.confirmLabel ?? 'Confirmar' }}
+  </button>
+</div>

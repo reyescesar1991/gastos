@@ -25,6 +25,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/settings/pages/user-settings/user-settings').then((m) => m.UserSettings)
             },
             {
+                path: 'movimientos',
+                loadChildren: () => import('./features/movements/movements-routes').then((m) => m.MOVEMENTS_ROUTES)
+            },
+            {
                 path: '**',
                 redirectTo: 'dashboard'
             }

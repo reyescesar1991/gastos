@@ -1,4 +1,5 @@
 
+import { MovementType } from "./movement.model";
 
 export interface MovementDto {
 
@@ -6,7 +7,7 @@ export interface MovementDto {
     amount: number,
     description: string,
     date: string,
-    type: 'income' | 'outcome',
+    type: MovementType,
     category: string,
     currency: string
 }

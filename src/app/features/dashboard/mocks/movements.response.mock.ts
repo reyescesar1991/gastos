@@ -21,7 +21,7 @@ export const MOVEMENTS_MOCK : ApiSuccessResponse<MovementDto[]> = {
             description: 'Pago de servicios',
             amount: 100.00,
             date: '2023-07-05',
-            type: 'outcome',
+            type: 'expense',
             category: 'Servicios',
             currency: 'USD'
         }

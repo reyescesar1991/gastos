@@ -94,7 +94,8 @@ describe('QuickNav', () => {
     expect(input().value).toBe('');
   });
 
-  it('ofrece la configuración de usuario, la única opción habilitada del mock', () => {
+  it('ofrece las opciones habilitadas del mock y navega a la elegida', () => {
+    // El mock trae habilitadas "Agregar movimiento" y "Configuración de usuario".
     const navigate = vi.spyOn(router, 'navigateByUrl');
 
     input().dispatchEvent(new Event('focus'));
@@ -102,10 +103,11 @@ describe('QuickNav', () => {
 
     const options = fixture.nativeElement.querySelectorAll('.quick-nav__option');
 
-    expect(options.length).toBe(1);
-    expect(options[0].textContent).toContain('Configuración de usuario');
+    expect(options.length).toBe(2);
+    expect(options[0].textContent).toContain('Agregar movimiento');
+    expect(options[1].textContent).toContain('Configuración de usuario');
 
-    (options[0] as HTMLElement).click();
+    (options[1] as HTMLElement).click();
     fixture.detectChanges();
 
     expect(navigate).toHaveBeenCalledWith('/configuracion');
