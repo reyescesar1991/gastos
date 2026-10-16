@@ -6,6 +6,7 @@ import { ToastService } from "../../services/toast-service";
 import { firstValueFrom } from "rxjs/internal/firstValueFrom";
 import { MovementMapper } from "../../models/movements/movement.mapper";
 import { ErrorUtils } from "../../utils/error-handler.util";
+import { AddMovementRequest } from "../../../features/movements/models/add-movement-request.model";
 
 
 
@@ -13,7 +14,7 @@ import { ErrorUtils } from "../../utils/error-handler.util";
 export const LATEST_MOVEMENTS_LIMIT = 5;
 
 // 1. Definimos la interfaz del estado de la tienda de movimientos
-export interface BalanceState {
+export interface MovementState {
     movements: Movement[] | null;
     isLoading: boolean;
     error: string | null;
@@ -21,7 +22,7 @@ export interface BalanceState {
 }
 
 // 2. Estado inicial
-const initialState: BalanceState = {
+const initialState: MovementState = {
     movements: null,
     isLoading: false,
     error: null,
@@ -51,31 +52,54 @@ export const MovementsStore = signalStore(
     ),
 
     withMethods(
-        (store, movementsService = inject(MovementsApiService), toastService = inject(ToastService)) => ({
+        (
+            store,
+            movementsService = inject(MovementsApiService),
+            toastService = inject(ToastService)
+        ) => {
 
-            async getMovements(): Promise<void> {
-
+            // Declaramos getMovements de forma independiente para poder llamarlo donde queramos
+            const getMovements = async (): Promise<void> => {
                 patchState(store, { isLoading: true, error: null });
 
-                try{
-
+                try {
                     const response = await firstValueFrom(movementsService.getMovements());
-
                     const movementsDomain = MovementMapper.toModel(response.data);
-
                     patchState(store, { movements: movementsDomain, isLoading: false });
-
-                }
-                catch (err){
-
+                } catch (err) {
                     const errorMessage = ErrorUtils.getErrorMessage(err);
-
                     patchState(store, { error: errorMessage, isLoading: false });
-
                     toastService.error(errorMessage, { duration: 5000 });
                 }
-            
-            }
-        })
+            };
+
+            return {
+                getMovements,
+
+                async addMovement(request: AddMovementRequest): Promise<void> {
+
+                    patchState(store, { isLoading: true, error: null, successMessage: null });
+
+                    try {
+                        const response = await firstValueFrom(movementsService.addMovement(request));
+
+                        
+                        await getMovements();
+
+                        patchState(store, {
+                            isLoading: false,
+                            successMessage: response.message
+                        });
+
+                        toastService.success(response.message, { duration: 4000 });
+
+                    } catch (err) {
+                        const errorMessage = ErrorUtils.getErrorMessage(err);
+                        patchState(store, { error: errorMessage, isLoading: false });
+                        toastService.error(errorMessage, { duration: 5000 });
+                    }
+                }
+            };
+        }
     )
 )

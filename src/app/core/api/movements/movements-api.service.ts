@@ -6,6 +6,7 @@ import { Observable } from "rxjs/internal/Observable";
 import { MOVEMENTS_MOCK } from "../../../features/dashboard/mocks/movements.response.mock";
 import { of } from "rxjs/internal/observable/of";
 import { delay } from "rxjs/internal/operators/delay";
+import { AddMovementRequest } from "../../../features/movements/models/add-movement-request.model";
 
 
 /**
@@ -23,5 +24,13 @@ export class MovementsApiService {
             return of(MOVEMENTS_MOCK).pipe(delay(500));
         }
         return this.httpClient.get<ApiSuccessResponse<MovementDto[]>>('/movements');
+    }
+
+    addMovement(movement : AddMovementRequest) : Observable<ApiSuccessResponse<void>> {
+
+        if(this.useMock){
+            return of({statusCode: 200, message: 'Movimiento creado con éxito', data: undefined}).pipe(delay(500));
+        }
+        return this.httpClient.post<ApiSuccessResponse<void>>('/movements', movement);
     }
 }
