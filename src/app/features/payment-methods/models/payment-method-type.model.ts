@@ -5,8 +5,11 @@ export interface PaymentMethodTypeOption {
   /** Valor del dominio que se guarda (`card` / `account` / `binance`). */
   readonly value: PaymentMethodType;
 
-  /** Etiqueta visible en español. */
+  /** Etiqueta completa, para la confirmación. */
   readonly label: string;
+
+  /** Etiqueta corta, para el control segmentado en móvil. */
+  readonly shortLabel: string;
 }
 
 /**
@@ -28,7 +31,7 @@ export const PAYMENT_METHOD_TYPE_LABELS: Record<PaymentMethodType, string> = {
  * `createInitialAddPaymentMethodForm()`.
  */
 export const PAYMENT_METHOD_TYPE_OPTIONS: readonly PaymentMethodTypeOption[] = [
-  { value: 'card', label: PAYMENT_METHOD_TYPE_LABELS.card },
-  { value: 'account', label: PAYMENT_METHOD_TYPE_LABELS.account },
-  { value: 'binance', label: PAYMENT_METHOD_TYPE_LABELS.binance },
+  { value: 'card', label: PAYMENT_METHOD_TYPE_LABELS.card, shortLabel: 'Tarjeta' },
+  { value: 'account', label: PAYMENT_METHOD_TYPE_LABELS.account, shortLabel: 'Cuenta' },
+  { value: 'binance', label: PAYMENT_METHOD_TYPE_LABELS.binance, shortLabel: 'Binance' },
 ];

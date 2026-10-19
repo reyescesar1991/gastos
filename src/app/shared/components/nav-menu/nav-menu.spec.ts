@@ -60,22 +60,45 @@ describe('NavMenu', () => {
     expect(labels).toEqual([
       'Agregar movimiento',
       'Ver movimientos',
-      'Agregar método de pago',
+      'Métodos de pago',
       'Configuración de usuario',
     ]);
   });
 
-  it('deja deshabilitadas las opciones que todavía no tienen vista', () => {
-    // Del mock, "Agregar movimiento" (módulo de movimientos) y "Configuración de
-    // usuario" ya tienen vista; "Ver movimientos" y "Agregar método de pago" no.
+  it('deja deshabilitada solo la opción que todavía no tiene vista', () => {
+    // Del mock, "Ver movimientos" es la única que aún no tiene vista.
     const disabled = links().filter((link) => link.disabled);
 
     expect(links().length).toBe(4);
-    expect(disabled.length).toBe(2);
-    expect(disabled.map((link) => link.textContent).join(' ')).toContain('Ver movimientos');
-    expect(disabled.map((link) => link.textContent).join(' ')).toContain('Agregar método de pago');
+    expect(disabled.length).toBe(1);
+    expect(disabled[0].textContent).toContain('Ver movimientos');
     expect(disabled.every((link) => link.getAttribute('aria-disabled') === 'true')).toBe(true);
-    expect(fixture.nativeElement.querySelectorAll('.nav-menu__state').length).toBe(2);
+    expect(fixture.nativeElement.querySelectorAll('.nav-menu__state').length).toBe(1);
+  });
+
+  it('navega al registro de método de pago desde su subhija', async () => {
+    const navigate = vi.spyOn(router, 'navigateByUrl');
+    const paymentMethods = links()[2];
+
+    expect(paymentMethods.disabled).toBe(false);
+    expect(paymentMethods.getAttribute('aria-disabled')).toBeNull();
+    expect(paymentMethods.textContent).toContain('Métodos de pago');
+    expect(paymentMethods.getAttribute('aria-expanded')).toBe('false');
+
+    paymentMethods.click();
+    await fixture.whenStable();
+
+    expect(paymentMethods.getAttribute('aria-expanded')).toBe('true');
+
+    const child = fixture.nativeElement.querySelector(
+      '.nav-menu__link--child',
+    ) as HTMLButtonElement;
+
+    expect(child.textContent).toContain('Agregar método de pago');
+
+    child.click();
+
+    expect(navigate).toHaveBeenCalledWith('/metodos-pago/nuevo');
   });
 
   it('navega a la opción habilitada sin marca de inactividad', () => {
@@ -117,7 +140,9 @@ describe('NavMenu', () => {
     link.click();
     await fixture.whenStable();
 
-    const child = fixture.nativeElement.querySelector('.nav-menu__link--child') as HTMLButtonElement;
+    const child = fixture.nativeElement.querySelector(
+      '.nav-menu__link--child',
+    ) as HTMLButtonElement;
 
     expect(link.getAttribute('aria-expanded')).toBe('true');
     expect(child).toBeTruthy();
@@ -132,7 +157,9 @@ describe('NavMenu', () => {
     await fixture.whenStable();
 
     const navigate = vi.spyOn(router, 'navigateByUrl');
-    const child = fixture.nativeElement.querySelector('.nav-menu__link--child') as HTMLButtonElement;
+    const child = fixture.nativeElement.querySelector(
+      '.nav-menu__link--child',
+    ) as HTMLButtonElement;
 
     child.click();
     await fixture.whenStable();

@@ -9,6 +9,7 @@ import { NavigationItem } from "../../../models/navigation/navigation-item.model
 export const NAVIGATION_IDS = {
     movementAdd: 'movement-add',
     movementList: 'movement-list',
+    paymentMethods: 'payment-methods',
     paymentMethodAdd: 'payment-method-add',
     userSettings: 'user-settings',
 } as const;
@@ -18,10 +19,12 @@ export const NAVIGATION_IDS = {
  * Data dummy del menú de navegación.
  *
  * Cada opción viaja con `enabled` según exista o no su vista: las que todavía
- * no existen se muestran atenuadas y sin navegar. "Agregar movimiento" y
- * "Configuración de usuario" ya están habilitadas; al crear la ruta de las demás
- * basta con poner el ítem en `true` para activar la opción, el estado
- * seleccionado y los accesos rápidos que la consumen.
+ * no existen se muestran atenuadas y sin navegar. "Agregar movimiento",
+ * "Métodos de pago" y "Configuración de usuario" ya están habilitadas; al crear
+ * la ruta de las demás basta con poner el ítem en `true` para activar la opción,
+ * el estado seleccionado y los accesos rápidos que la consumen. "Métodos de
+ * pago" agrupa sus rutas en `children` porque el módulo tendrá más opciones:
+ * "Agregar método de pago" es la primera subhija.
  */
 export const NAVIGATION_MENU_MOCK: NavigationItem[] = [
 
@@ -40,11 +43,20 @@ export const NAVIGATION_MENU_MOCK: NavigationItem[] = [
         enabled: false,
     },
     {
-        id: NAVIGATION_IDS.paymentMethodAdd,
-        label: 'Agregar método de pago',
+        id: NAVIGATION_IDS.paymentMethods,
+        label: 'Métodos de pago',
         icon: 'card',
-        route: '/metodos-pago/nuevo',
-        enabled: false,
+        route: '/metodos-pago',
+        enabled: true,
+        children: [
+            {
+                id: NAVIGATION_IDS.paymentMethodAdd,
+                label: 'Agregar método de pago',
+                icon: 'plus',
+                route: '/metodos-pago/nuevo',
+                enabled: true,
+            },
+        ],
     },
     {
         id: NAVIGATION_IDS.userSettings,

@@ -1,1 +1,162 @@
-<p>add-payment-method works!</p>
+<section class="payment">
+  <header class="payment__intro">
+    <span class="payment__tag">Medios de pago</span>
+    <h1 class="payment__title">Agregar método de pago</h1>
+    <p class="payment__subtitle">
+      Guarda una tarjeta o cuenta para tenerla a mano en tus próximos movimientos.
+    </p>
+  </header>
+
+  @if (paymentMethodsStore.error(); as error) {
+    <p class="payment__alert" role="alert">{{ error }}</p>
+  }
+
+  <form class="payment__card" novalidate (submit)="onSubmit($event)">
+    <fieldset class="field">
+      <legend class="field__label">Tipo</legend>
+
+      <div class="segmented">
+        @for (option of typeOptions; track option.value) {
+          <label class="segmented__option">
+            <input
+              class="segmented__input"
+              type="radio"
+              [value]="option.value"
+              [formField]="paymentMethodForm.type"
+              (input)="onTypeChange(option.value)"
+            />
+            <span class="segmented__label">{{ option.shortLabel }}</span>
+          </label>
+        }
+      </div>
+
+      @if (paymentMethodForm.type().touched() && paymentMethodForm.type().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of paymentMethodForm.type().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </fieldset>
+
+    <div class="payment__row">
+      <div class="field">
+        <div class="field__row">
+          <label class="field__label" for="name">Nombre</label>
+          <span class="field__counter" id="name-counter">
+            {{ paymentMethodModel().name.length }}/{{ nameMaxLength }}
+          </span>
+        </div>
+        <input
+          class="field__input"
+          id="name"
+          type="text"
+          autocomplete="off"
+          aria-describedby="name-counter"
+          [attr.aria-invalid]="
+            paymentMethodForm.name().touched() && paymentMethodForm.name().invalid()
+          "
+          [class.field__input--invalid]="
+            paymentMethodForm.name().touched() && paymentMethodForm.name().invalid()
+          "
+          [formField]="paymentMethodForm.name"
+        />
+        @if (paymentMethodForm.name().touched() && paymentMethodForm.name().invalid()) {
+          <ul class="field__errors" role="alert">
+            @for (error of paymentMethodForm.name().errors(); track $index) {
+              <li>{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="currency">Moneda</label>
+        <select class="field__input" id="currency" [formField]="paymentMethodForm.currency">
+          @for (currency of currencies; track currency) {
+            <option [value]="currency">{{ currency }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field__row">
+        <label class="field__label" for="number">{{ numberLabel() }}</label>
+        <span class="field__counter" id="number-counter">
+          {{ paymentMethodModel().number.length }}/{{ numberMaxLength() }}
+        </span>
+      </div>
+      <input
+        class="field__input field__input--number"
+        id="number"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        aria-describedby="number-counter"
+        [attr.aria-required]="numberRequired()"
+        [attr.aria-invalid]="
+          paymentMethodForm.number().touched() && paymentMethodForm.number().invalid()
+        "
+        [class.field__input--invalid]="
+          paymentMethodForm.number().touched() && paymentMethodForm.number().invalid()
+        "
+        [formField]="paymentMethodForm.number"
+        (beforeinput)="onNumberBeforeInput($event)"
+        (input)="onNumberInput($event)"
+      />
+      @if (paymentMethodForm.number().touched() && paymentMethodForm.number().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of paymentMethodForm.number().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="field">
+      <div class="field__row">
+        <label class="field__label" for="description">Descripción (opcional)</label>
+        <span class="field__counter" id="description-counter">
+          {{ paymentMethodModel().description?.length ?? 0 }}/{{ descriptionMaxLength }}
+        </span>
+      </div>
+      <input
+        class="field__input"
+        id="description"
+        type="text"
+        autocomplete="off"
+        aria-describedby="description-counter"
+        [attr.aria-invalid]="
+          paymentMethodForm.description().touched() && paymentMethodForm.description().invalid()
+        "
+        [class.field__input--invalid]="
+          paymentMethodForm.description().touched() && paymentMethodForm.description().invalid()
+        "
+        [formField]="paymentMethodForm.description"
+      />
+      @if (paymentMethodForm.description().touched() && paymentMethodForm.description().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of paymentMethodForm.description().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="payment__actions">
+      <button class="btn" type="submit" [disabled]="paymentMethodForm().invalid() || isSaving()">
+        {{ isSaving() ? 'Guardando…' : 'Guardar método de pago' }}
+      </button>
+      <button class="btn btn--ghost" type="button" (click)="onClear()">Limpiar</button>
+    </div>
+
+    @if (paymentMethodForm().invalid()) {
+      <p class="payment__hint">Completa los campos obligatorios para poder guardar.</p>
+    }
+
+    <p class="payment__footer">
+      <a class="payment__link" routerLink="/dashboard">Volver al resumen</a>
+    </p>
+  </form>
+</section>

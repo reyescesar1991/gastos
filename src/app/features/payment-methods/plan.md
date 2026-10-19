@@ -24,10 +24,10 @@ Derivado de `src/app/features/payment-methods/instructions.md`. Respeta
 | `payment-methods-api.service.ts` | Correcto (mock) | `getPaymentMethods()` y `addPaymentMethod()` con `useMock = true` y `delay(500)`. El POST mock no persiste. |
 | `core/stores/paymentMethods/payment-method.store.ts` | **Completa** | `getPaymentMethods`, `addPaymentMethod(): Promise<boolean>`, `resetFeedback`, `isLoading`, `error`, `successMessage` y computeds. No necesita cambios funcionales. |
 | `payment-methods-routes.ts` | Correcto | `'' → 'nuevo'` y `nuevo` con `loadComponent`. |
-| `src/app/app.routes.ts` | **Sin montar** | No existe la ruta `metodos-pago`. Punto 6 pendiente. |
-| `shared/components/nav-menu/mocks/navigation-menu.mock.ts` | Pendiente | `paymentMethodAdd` está en `enabled: false` con la ruta correcta (`/metodos-pago/nuevo`). |
-| `shared/components/nav-menu/nav-menu.spec.ts` | A ajustar | Afirma que hay **dos** opciones deshabilitadas; al habilitar métodos de pago queda una. |
-| `app.routes.spec.ts` | A ampliar | No conoce el módulo. |
+| `src/app/app.routes.ts` | Montado | `metodos-pago` cuelga del layout y carga `PAYMENT_METHODS_ROUTES`. |
+| `shared/components/nav-menu/mocks/navigation-menu.mock.ts` | Habilitado | `Métodos de pago` es una opción padre habilitada y `Agregar método de pago` su primera subhija; solo "Ver movimientos" sigue pendiente. |
+| `shared/components/nav-menu/nav-menu.spec.ts` | Actualizado | Afirma una sola opción deshabilitada y la navegación a `/metodos-pago/nuevo`. |
+| `app.routes.spec.ts` | Ampliado | Monta `/metodos-pago/nuevo` y comprueba el redirect de `/metodos-pago`. |
 
 **Verificado ahora:** `npx ng build` → exit 0 (solo el warning heredado de `add-movement.scss` a
 5,39 kB) y la spec actual del componente pasa (1/1) porque no renderiza campos. Es decir: hoy el
@@ -375,18 +375,34 @@ de “types”.
 **Verificación:** `npx ng test` → 141/141 en 25 archivos; `npx ng build` → exit 0 con el warning
 heredado de `add-movement.scss`.
 
-### Fase 2 — Componente, template y estilos
+### Fase 2 — Componente, template y estilos (completada)
 
 - `add-payment-method.ts`: `FormField`, opciones, `isSaving`, tope del número por tipo, etiquetas
   legibles, número enmascarado, foco en `#name`.
-- `add-payment-method.html` y `.scss` (secciones 3.1–3.4).
-- Ampliar `add-payment-method.spec.ts` con tope, confirmación, guardado y limpieza.
+- `add-payment-method.html` y `.scss` (secciones 3.1–3.4). El SCSS quedó en ~3,99 kB, dentro del
+  presupuesto de 4 kB, sin animación de entrada para no pasarse.
+- `add-payment-method.spec.ts` con 13 casos: valores iniciales, validaciones, topes 16/20/16,
+  recorte al cambiar de tipo, confirmación con número enmascarado, guardado, registrar otro, fallo y
+  limpieza.
 
-### Fase 3 — Routing, menú y verificación final
+**Verificación:** `npx ng test` → 152/152 en 25 archivos; `npx ng build` → exit 0, solo con el
+warning heredado de `add-movement.scss`.
 
-- Montar `metodos-pago` en `app.routes.ts` y habilitar el ítem del menú.
-- Ajustar `nav-menu.spec.ts` y ampliar `app.routes.spec.ts`.
-- `npx ng test` + `npx ng build` + checklist manual en navegador.
+### Fase 3 — Routing, menú y verificación final (completada)
+
+- `metodos-pago` montado en `app.routes.ts`, antes del comodín, con carga lazy del módulo.
+- `Métodos de pago` habilitado como opción padre con `Agregar método de pago` como primera subhija
+  (el módulo tendrá más opciones); menú, estado activo y navegación rápida lo toman solos desde
+  `NavStore`.
+- `nav-menu.spec.ts`: una sola opción deshabilitada y navegación a `/metodos-pago/nuevo`.
+- `app.routes.spec.ts`: monta el formulario dentro del layout y verifica el redirect de la raíz.
+- `quick-nav.spec.ts`: la navegación rápida ahora ofrece tres opciones habilitadas y navega a
+  `/metodos-pago`.
+
+**Verificación:** `npx ng test` → 155/155 en 25 archivos; `npx ng build` → exit 0, solo con el
+warning heredado de `add-movement.scss`.
+
+**Pendiente:** checklist manual en navegador (390×844 y 1280×800); no se ejecutó desde el agente.
 
 ---
 

@@ -64,6 +64,21 @@ describe('Rutas de la app', () => {
     expect(router.url).toBe('/movimientos/nuevo');
   });
 
+  it('monta el registro de método de pago dentro del layout', async () => {
+    const compiled = await navigateTo('/metodos-pago/nuevo');
+
+    expect(compiled.querySelector('app-header')).not.toBeNull();
+    expect(compiled.querySelector('app-nav-menu')).not.toBeNull();
+    expect(compiled.querySelector('app-add-payment-method')).not.toBeNull();
+    expect(compiled.querySelector('app-add-payment-method #name')).not.toBeNull();
+  });
+
+  it('redirige la raíz del módulo de métodos de pago a su registro', async () => {
+    await navigateTo('/metodos-pago');
+
+    expect(router.url).toBe('/metodos-pago/nuevo');
+  });
+
   it('no monta el layout en las pantallas de autenticación', async () => {
     const compiled = await navigateTo('/auth/login');
 

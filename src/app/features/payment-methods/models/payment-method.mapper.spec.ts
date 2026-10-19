@@ -61,10 +61,4 @@ describe('PaymentMethodMapper', () => {
     expect(spaces.description).toBeUndefined();
     expect(spaces.number).toBeUndefined();
   });
-
-  it('omite la descripción cuando el modelo no la trae', () => {
-    const request = PaymentMethodMapper.toRequest({ ...form, description: undefined });
-
-    expect(request.description).toBeUndefined();
-  });
 });

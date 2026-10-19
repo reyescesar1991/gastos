@@ -95,7 +95,8 @@ describe('QuickNav', () => {
   });
 
   it('ofrece las opciones habilitadas del mock y navega a la elegida', () => {
-    // El mock trae habilitadas "Agregar movimiento" y "Configuración de usuario".
+    // El mock trae habilitadas "Agregar movimiento", "Métodos de pago" y
+    // "Configuración de usuario".
     const navigate = vi.spyOn(router, 'navigateByUrl');
 
     input().dispatchEvent(new Event('focus'));
@@ -103,14 +104,15 @@ describe('QuickNav', () => {
 
     const options = fixture.nativeElement.querySelectorAll('.quick-nav__option');
 
-    expect(options.length).toBe(2);
+    expect(options.length).toBe(3);
     expect(options[0].textContent).toContain('Agregar movimiento');
-    expect(options[1].textContent).toContain('Configuración de usuario');
+    expect(options[1].textContent).toContain('Métodos de pago');
+    expect(options[2].textContent).toContain('Configuración de usuario');
 
     (options[1] as HTMLElement).click();
     fixture.detectChanges();
 
-    expect(navigate).toHaveBeenCalledWith('/configuracion');
+    expect(navigate).toHaveBeenCalledWith('/metodos-pago');
   });
 
   it('cierra el desplegable con Escape', () => {

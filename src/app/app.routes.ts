@@ -29,6 +29,10 @@ export const routes: Routes = [
                 loadChildren: () => import('./features/movements/movements-routes').then((m) => m.MOVEMENTS_ROUTES)
             },
             {
+                path: 'metodos-pago',
+                loadChildren: () => import('./features/payment-methods/payment-methods-routes').then((m) => m.PAYMENT_METHODS_ROUTES)
+            },
+            {
                 path: '**',
                 redirectTo: 'dashboard'
             }
