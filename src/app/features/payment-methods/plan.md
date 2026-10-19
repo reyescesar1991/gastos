@@ -20,7 +20,7 @@ Derivado de `src/app/features/payment-methods/instructions.md`. Respeta
 | `models/payment-method.model.ts` | Correcto | `PaymentMethodType` y `PaymentMethodCurrency` ya centralizan los enums. |
 | `models/payment-method.dto.ts` | Correcto | Espejo del contrato. |
 | `models/payment-method.mapper.ts` | Mejorable | `toRequest` recibe `Omit<PaymentMethodModel, 'id'>` (no el form) y convierte vacíos en `''` en vez de `undefined`. Sin spec. |
-| `mocks/type-payment-methods.mock.ts` | **Código muerto** | `TYPE_PAYMENT_METHODS_API_RESPONSE_MOCK` no lo consume nadie; no hay endpoint de tipos en el servicio. Se elimina y el archivo queda solo con `PAYMENT_METHODS_USER_MOCK`. |
+| `mocks/payment-methods.response.mock.ts` | **Código muerto retirado** | `TYPE_PAYMENT_METHODS_API_RESPONSE_MOCK` no lo consumía nadie; no hay endpoint de tipos en el servicio. Ya se eliminó y el archivo (renombrado desde `type-payment-methods.mock.ts`) queda solo con `PAYMENT_METHODS_USER_MOCK`. |
 | `payment-methods-api.service.ts` | Correcto (mock) | `getPaymentMethods()` y `addPaymentMethod()` con `useMock = true` y `delay(500)`. El POST mock no persiste. |
 | `core/stores/paymentMethods/payment-method.store.ts` | **Completa** | `getPaymentMethods`, `addPaymentMethod(): Promise<boolean>`, `resetFeedback`, `isLoading`, `error`, `successMessage` y computeds. No necesita cambios funcionales. |
 | `payment-methods-routes.ts` | Correcto | `'' → 'nuevo'` y `nuevo` con `loadComponent`. |
@@ -356,20 +356,37 @@ válido. Etiqueta “Número de la tarjeta Binance (opcional)” y mismo tope de
 
 **D. Tipos estáticos.** Constante con etiquetas (patrón de `movement-type.model.ts`). Se elimina
 `TYPE_PAYMENT_METHODS_API_RESPONSE_MOCK` y `TypePaymentMethodsDto`; `PAYMENT_METHODS_USER_MOCK` se
-conserva. El archivo puede renombrarse a `payment-methods.response.mock.ts` para que el nombre no
-hable de “types”.
+conserva. El archivo se renombró a `payment-methods.response.mock.ts` para que el nombre no hable
+de “types”.
 
 ---
 
-## 7. Orden de ejecución sugerido
+## 7. Fases de ejecución
 
-1. Schema condicional (16/20/16) + constantes de longitud + etiquetas de tipo (secciones 2 y 3.5).
-2. Mapper y sus specs; spec del schema.
-3. `add-payment-method.ts`: `FormField`, opciones, `isSaving`, tope del número, etiquetas, foco.
-4. `add-payment-method.html` y `.scss`.
-5. Routing en `app.routes.ts`; habilitar el ítem del menú y ajustar `nav-menu.spec.ts`.
-6. Ampliar `add-payment-method.spec.ts` y `app.routes.spec.ts`.
-7. `npx ng test` + `npx ng build` + verificación manual en navegador.
+### Fase 1 — Modelo y validación (completada)
+
+- Schema condicional 16/20/16 con `discriminatedUnion` y `PAYMENT_METHOD_NUMBER_MAX_LENGTH`.
+- `description` vacía válida, `trim()` en nombre y descripción, mensajes corregidos.
+- `models/payment-method-type.model.ts` con etiquetas y opciones del selector.
+- `PaymentMethodMapper.toRequest(form)` con `trim()` y vacíos → `undefined`.
+- Eliminado el catálogo de tipos sin uso; mock renombrado a `payment-methods.response.mock.ts`.
+- Nuevas specs: `payment-methods.schemas.spec.ts` (10) y `payment-method.mapper.spec.ts` (5).
+
+**Verificación:** `npx ng test` → 141/141 en 25 archivos; `npx ng build` → exit 0 con el warning
+heredado de `add-movement.scss`.
+
+### Fase 2 — Componente, template y estilos
+
+- `add-payment-method.ts`: `FormField`, opciones, `isSaving`, tope del número por tipo, etiquetas
+  legibles, número enmascarado, foco en `#name`.
+- `add-payment-method.html` y `.scss` (secciones 3.1–3.4).
+- Ampliar `add-payment-method.spec.ts` con tope, confirmación, guardado y limpieza.
+
+### Fase 3 — Routing, menú y verificación final
+
+- Montar `metodos-pago` en `app.routes.ts` y habilitar el ítem del menú.
+- Ajustar `nav-menu.spec.ts` y ampliar `app.routes.spec.ts`.
+- `npx ng test` + `npx ng build` + checklist manual en navegador.
 
 ---
 

@@ -5,7 +5,7 @@ import { ApiSuccessResponse } from "../../core/models/api/api-success.model";
 import { PaymentMethodDto } from "./models/payment-method.dto";
 import { of } from "rxjs/internal/observable/of";
 import { delay } from "rxjs/internal/operators/delay";
-import { PAYMENT_METHODS_USER_MOCK } from "./mocks/type-payment-methods.mock";
+import { PAYMENT_METHODS_USER_MOCK } from "./mocks/payment-methods.response.mock";
 import { AddPaymentMethodRequest } from "./models/add-payment-method-request.model";
 
 @Injectable({ providedIn: 'root' })
