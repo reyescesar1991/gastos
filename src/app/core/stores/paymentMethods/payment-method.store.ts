@@ -6,7 +6,7 @@ import { ToastService } from "../../services/toast-service";
 import { firstValueFrom } from "rxjs/internal/firstValueFrom";
 import { PaymentMethodMapper } from "../../../features/payment-methods/models/payment-method.mapper";
 import { ErrorUtils } from "../../utils/error-handler.util";
-import { AddPaymentMethodRequest } from "../../../features/payment-methods/models/add-payment-method-request.model";
+import { PaymentMethodRequest } from "../../../features/payment-methods/models/add-payment-method-request.model";
 
 
 export interface PaymentMethodState {
@@ -63,7 +63,7 @@ export const PaymentMethodsStore = signalStore(
             return { 
                 getPaymentMethods, 
 
-                async addPaymentMethod(request : AddPaymentMethodRequest) : Promise<boolean> {
+                async addPaymentMethod(request : PaymentMethodRequest) : Promise<boolean> {
                     
                     patchState(store, { isLoading: true, error: null, successMessage: null });
     
@@ -88,6 +88,59 @@ export const PaymentMethodsStore = signalStore(
                         return false;
                     }
                 },
+
+                async updatePaymentMethod(request : Partial<PaymentMethodRequest>) : Promise<boolean> {
+                    
+                    patchState(store, { isLoading: true, error: null, successMessage: null });
+    
+                    try {
+                        const response = await firstValueFrom(paymentMethodsService.updatePaymentMethod(request));
+    
+                        await getPaymentMethods();
+    
+                        patchState(store, {
+                            isLoading: false,
+                            successMessage: response.message
+                        });
+    
+                        toastService.success(response.message, { duration: 4000 });
+
+                        return true;
+    
+                    } catch (err) {
+                        const errorMessage = ErrorUtils.getErrorMessage(err);
+                        patchState(store, { error: errorMessage, isLoading: false });
+                        toastService.error(errorMessage, { duration: 5000 });
+                        return false;
+                    }
+                },
+
+                async deletePaymentMethod(paymentMethodId : number) : Promise<boolean> {
+                    
+                    patchState(store, { isLoading: true, error: null, successMessage: null });
+    
+                    try {
+                        const response = await firstValueFrom(paymentMethodsService.deletePaymentMethod(paymentMethodId));
+    
+                        await getPaymentMethods();
+    
+                        patchState(store, {
+                            isLoading: false,
+                            successMessage: response.message
+                        });
+    
+                        toastService.success(response.message, { duration: 4000 });
+
+                        return true;
+    
+                    } catch (err) {
+                        const errorMessage = ErrorUtils.getErrorMessage(err);
+                        patchState(store, { error: errorMessage, isLoading: false });
+                        toastService.error(errorMessage, { duration: 5000 });
+                        return false;
+                    }
+                },
+                
 
                 resetFeedback(): void {
                     patchState(store, { error: null, successMessage: null });

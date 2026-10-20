@@ -8,26 +8,26 @@ Derivado de `src/app/features/payment-methods/instructions.md`. Respeta
 
 ## 0. Estado actual (inventario de lo ya implementado)
 
-| Archivo | Estado | Hallazgo |
-| --- | --- | --- |
-| `components/add-payment-method/add-payment-method.html` | **Stub** | Solo `<p>add-payment-method works!</p>`. Puntos 1 y 4: toda la vista está por construir. |
-| `components/add-payment-method/add-payment-method.scss` | **Vacío** | Sin estilos. |
-| `components/add-payment-method/add-payment-method.ts` | Parcial | Ya tiene `form()` + `validateStandardSchema`, el submit y el flujo de diálogos. Le faltan imports, opciones, tope del número, estado de guardado y etiquetas. |
-| `components/add-payment-method/add-payment-method.spec.ts` | **Insuficiente** | Solo `should create`; pasa porque el template es un stub. No cubre nada del flujo. |
-| `schemas/payment-methods.schemas.ts` | **Con defectos** | El `number` es un `z.union` sin relación con `type`; `description: ''` no valida; los mensajes hablan de “movimiento”/“nombre”. Ver sección 2. |
-| `models/add-payment-method-form.model.ts` | Correcto | Fábrica de valores iniciales (`type: 'account'`, `currency: 'USD'`). |
-| `models/add-payment-method-request.model.ts` | Correcto | `number` y `description` opcionales, coherente con el API. |
-| `models/payment-method.model.ts` | Correcto | `PaymentMethodType` y `PaymentMethodCurrency` ya centralizan los enums. |
-| `models/payment-method.dto.ts` | Correcto | Espejo del contrato. |
-| `models/payment-method.mapper.ts` | Mejorable | `toRequest` recibe `Omit<PaymentMethodModel, 'id'>` (no el form) y convierte vacíos en `''` en vez de `undefined`. Sin spec. |
-| `mocks/payment-methods.response.mock.ts` | **Código muerto retirado** | `TYPE_PAYMENT_METHODS_API_RESPONSE_MOCK` no lo consumía nadie; no hay endpoint de tipos en el servicio. Ya se eliminó y el archivo (renombrado desde `type-payment-methods.mock.ts`) queda solo con `PAYMENT_METHODS_USER_MOCK`. |
-| `payment-methods-api.service.ts` | Correcto (mock) | `getPaymentMethods()` y `addPaymentMethod()` con `useMock = true` y `delay(500)`. El POST mock no persiste. |
-| `core/stores/paymentMethods/payment-method.store.ts` | **Completa** | `getPaymentMethods`, `addPaymentMethod(): Promise<boolean>`, `resetFeedback`, `isLoading`, `error`, `successMessage` y computeds. No necesita cambios funcionales. |
-| `payment-methods-routes.ts` | Correcto | `'' → 'nuevo'` y `nuevo` con `loadComponent`. |
-| `src/app/app.routes.ts` | Montado | `metodos-pago` cuelga del layout y carga `PAYMENT_METHODS_ROUTES`. |
-| `shared/components/nav-menu/mocks/navigation-menu.mock.ts` | Habilitado | `Métodos de pago` es una opción padre habilitada y `Agregar método de pago` su primera subhija; solo "Ver movimientos" sigue pendiente. |
-| `shared/components/nav-menu/nav-menu.spec.ts` | Actualizado | Afirma una sola opción deshabilitada y la navegación a `/metodos-pago/nuevo`. |
-| `app.routes.spec.ts` | Ampliado | Monta `/metodos-pago/nuevo` y comprueba el redirect de `/metodos-pago`. |
+| Archivo                                                    | Estado                     | Hallazgo                                                                                                                                                                                                                         |
+| ---------------------------------------------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components/add-payment-method/add-payment-method.html`    | **Stub**                   | Solo `<p>add-payment-method works!</p>`. Puntos 1 y 4: toda la vista está por construir.                                                                                                                                         |
+| `components/add-payment-method/add-payment-method.scss`    | **Vacío**                  | Sin estilos.                                                                                                                                                                                                                     |
+| `components/add-payment-method/add-payment-method.ts`      | Parcial                    | Ya tiene `form()` + `validateStandardSchema`, el submit y el flujo de diálogos. Le faltan imports, opciones, tope del número, estado de guardado y etiquetas.                                                                    |
+| `components/add-payment-method/add-payment-method.spec.ts` | **Insuficiente**           | Solo `should create`; pasa porque el template es un stub. No cubre nada del flujo.                                                                                                                                               |
+| `schemas/payment-methods.schemas.ts`                       | **Con defectos**           | El `number` es un `z.union` sin relación con `type`; `description: ''` no valida; los mensajes hablan de “movimiento”/“nombre”. Ver sección 2.                                                                                   |
+| `models/add-payment-method-form.model.ts`                  | Correcto                   | Fábrica de valores iniciales (`type: 'account'`, `currency: 'USD'`).                                                                                                                                                             |
+| `models/add-payment-method-request.model.ts`               | Correcto                   | `number` y `description` opcionales, coherente con el API.                                                                                                                                                                       |
+| `models/payment-method.model.ts`                           | Correcto                   | `PaymentMethodType` y `PaymentMethodCurrency` ya centralizan los enums.                                                                                                                                                          |
+| `models/payment-method.dto.ts`                             | Correcto                   | Espejo del contrato.                                                                                                                                                                                                             |
+| `models/payment-method.mapper.ts`                          | Mejorable                  | `toRequest` recibe `Omit<PaymentMethodModel, 'id'>` (no el form) y convierte vacíos en `''` en vez de `undefined`. Sin spec.                                                                                                     |
+| `mocks/payment-methods.response.mock.ts`                   | **Código muerto retirado** | `TYPE_PAYMENT_METHODS_API_RESPONSE_MOCK` no lo consumía nadie; no hay endpoint de tipos en el servicio. Ya se eliminó y el archivo (renombrado desde `type-payment-methods.mock.ts`) queda solo con `PAYMENT_METHODS_USER_MOCK`. |
+| `payment-methods-api.service.ts`                           | Correcto (mock)            | `getPaymentMethods()` y `addPaymentMethod()` con `useMock = true` y `delay(500)`. El POST mock no persiste.                                                                                                                      |
+| `core/stores/paymentMethods/payment-method.store.ts`       | **Completa**               | `getPaymentMethods`, `addPaymentMethod(): Promise<boolean>`, `resetFeedback`, `isLoading`, `error`, `successMessage` y computeds. No necesita cambios funcionales.                                                               |
+| `payment-methods-routes.ts`                                | Correcto                   | `'' → 'nuevo'` y `nuevo` con `loadComponent`.                                                                                                                                                                                    |
+| `src/app/app.routes.ts`                                    | Montado                    | `metodos-pago` cuelga del layout y carga `PAYMENT_METHODS_ROUTES`.                                                                                                                                                               |
+| `shared/components/nav-menu/mocks/navigation-menu.mock.ts` | Habilitado                 | `Métodos de pago` es una opción padre habilitada y `Agregar método de pago` su primera subhija; solo "Ver movimientos" sigue pendiente.                                                                                          |
+| `shared/components/nav-menu/nav-menu.spec.ts`              | Actualizado                | Afirma una sola opción deshabilitada y la navegación a `/metodos-pago/nuevo`.                                                                                                                                                    |
+| `app.routes.spec.ts`                                       | Ampliado                   | Monta `/metodos-pago/nuevo` y comprueba el redirect de `/metodos-pago`.                                                                                                                                                          |
 
 **Verificado ahora:** `npx ng build` → exit 0 (solo el warning heredado de `add-movement.scss` a
 5,39 kB) y la spec actual del componente pasa (1/1) porque no renderiza campos. Es decir: hoy el
@@ -68,16 +68,16 @@ módulo compila, pero no existe como pantalla ni está enlazado.
 
 ## 2. Revisión del schema (punto 2 del instructivo)
 
-| Elemento | Estado | Acción |
-| --- | --- | --- |
-| `nameSchema` (3–50) | Correcto | Agregar `.trim()` para que un nombre de solo espacios no pase. |
-| `descriptionSchema` (3–100, `.optional()`) | **Roto para el form** | El modelo es `string` y arranca en `''`; `optional()` solo acepta `undefined`. Aceptar vacío: `z.string().trim().max(100).refine(v => v === '' || v.length >= 3, 'Mínimo 3 caracteres')`. El mapper convierte `'' → undefined`. |
-| `cardNumberSchema` | **Aislado del tipo** | Hoy se usa dentro de un `z.union`: una tarjeta con 20 dígitos pasa como cuenta. Debe depender de `type`. |
-| `accountNumberSchema` | Igual | Mismo problema. |
-| `number` en el objeto | `.optional()` ambiguo | La opcionalidad depende del tipo: obligatorio en `card`/`account` (16 y 20 exactos), opcional en `binance` (si se completa, 16 exactos). |
-| Mensajes | Copiados | “Ingresa un nombre” en los números y “Describe el movimiento” en la descripción. Corregir el copy. |
-| `currencySchema` / `typeSchema` | Correctos | Reutilizar `CURRENCY_TYPE` y `TYPE_PAYMENT_METHOD` con `satisfies`. |
-| Constantes de longitud | Correctas | `CARD_NUMBER_LENGTH = 16`, `ACCOUNT_NUMBER_LENGTH = 20`. Agregar un mapa por tipo reutilizable por el componente. |
+| Elemento                                   | Estado                | Acción                                                                                                                                                                                      |
+| ------------------------------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nameSchema` (3–50)                        | Correcto              | Agregar `.trim()` para que un nombre de solo espacios no pase.                                                                                                                              |
+| `descriptionSchema` (3–100, `.optional()`) | **Roto para el form** | El modelo es `string` y arranca en `''`; `optional()` solo acepta `undefined`. Aceptar vacío con un `refine` que permita `''` o exija el mínimo de 3. El mapper convierte `'' → undefined`. |
+| `cardNumberSchema`                         | **Aislado del tipo**  | Hoy se usa dentro de un `z.union`: una tarjeta con 20 dígitos pasa como cuenta. Debe depender de `type`.                                                                                    |
+| `accountNumberSchema`                      | Igual                 | Mismo problema.                                                                                                                                                                             |
+| `number` en el objeto                      | `.optional()` ambiguo | La opcionalidad depende del tipo: obligatorio en `card`/`account` (16 y 20 exactos), opcional en `binance` (si se completa, 16 exactos).                                                    |
+| Mensajes                                   | Copiados              | “Ingresa un nombre” en los números y “Describe el movimiento” en la descripción. Corregir el copy.                                                                                          |
+| `currencySchema` / `typeSchema`            | Correctos             | Reutilizar `CURRENCY_TYPE` y `TYPE_PAYMENT_METHOD` con `satisfies`.                                                                                                                         |
+| Constantes de longitud                     | Correctas             | `CARD_NUMBER_LENGTH = 16`, `ACCOUNT_NUMBER_LENGTH = 20`. Agregar un mapa por tipo reutilizable por el componente.                                                                           |
 
 **Propuesta de schema (unión discriminada por `type`):**
 
@@ -134,9 +134,9 @@ export const paymentMethodSchema = z.discriminatedUnion('type', [
 
 ```ts
 export const PAYMENT_METHOD_NUMBER_MAX_LENGTH = {
-  card: CARD_NUMBER_LENGTH,       // 16
+  card: CARD_NUMBER_LENGTH, // 16
   account: ACCOUNT_NUMBER_LENGTH, // 20
-  binance: CARD_NUMBER_LENGTH,    // 16: tarjeta de Binance, opcional
+  binance: CARD_NUMBER_LENGTH, // 16: tarjeta de Binance, opcional
 } as const satisfies Record<PaymentMethodType, number>;
 ```
 
@@ -292,27 +292,27 @@ hay que tocar `nav-menu`, `app-header` ni `quick-nav`.
 
 ## 4. Detalle por punto del instructivo
 
-| Punto | Cómo se cubre |
-| --- | --- |
-| 1. Terminar html/scss/ts | Secciones 3.1–3.4. |
-| 2. Analizar lo implementado | Sección 0 y revisión de schema de la sección 2; el resto del módulo está correcto. |
-| 3. Analizar la store | Completa; se consume tal cual (3.6). |
-| 4. HTML/SCSS con taste skill y estado de la store | 3.3/3.4; `error`, `isLoading` y `resetFeedback` salen de la store. |
+| Punto                                                     | Cómo se cubre                                                                                    |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 1. Terminar html/scss/ts                                  | Secciones 3.1–3.4.                                                                               |
+| 2. Analizar lo implementado                               | Sección 0 y revisión de schema de la sección 2; el resto del módulo está correcto.               |
+| 3. Analizar la store                                      | Completa; se consume tal cual (3.6).                                                             |
+| 4. HTML/SCSS con taste skill y estado de la store         | 3.3/3.4; `error`, `isLoading` y `resetFeedback` salen de la store.                               |
 | 5. Tope 16 tarjeta / 20 cuenta y evitar teclear más de 20 | Schema condicional (2) + guardas `beforeinput`/`input` (3.2) + contador por tipo (16 / 20 / 16). |
-| 6. Incorporar al routing principal | 3.7. |
+| 6. Incorporar al routing principal                        | 3.7.                                                                                             |
 
 ---
 
 ## 5. Pruebas
 
-| Spec | Casos |
-| --- | --- |
-| `add-payment-method.spec.ts` | Valores iniciales; submit deshabilitado con form inválido; error visible al tocar un campo; no guarda al enviar (abre confirmación); confirmar llama `addPaymentMethod` con el request mapeado; “registrar otro” limpia y enfoca `#name`; “ir al resumen” navega a `/dashboard`; fallo del guardado conserva los datos; “Limpiar” vuelve a los iniciales con validadores activos. |
-| Tope del número (misma spec) | Tarjeta: 17 dígitos → 16; cuenta: 21 → 20; cambio de cuenta (20) a tarjeta recorta a 16; letras se descartan; Binance acepta vacío y recorta a 16. |
-| `payment-methods.schemas.spec.ts` | Tarjeta exige 16 y rechaza 20; cuenta exige 20 y rechaza 16; nombre 2/51; descripción `''` válida y `'ab'` inválida; Binance sin número válido y con 16 válido (15/17 inválidos). |
-| `payment-method.mapper.spec.ts` | `trim`, vacíos → `undefined`, mapeo completo. |
-| `app.routes.spec.ts` | `/metodos-pago/nuevo` monta `app-add-payment-method` dentro del layout; `/metodos-pago` redirige a `nuevo`. |
-| `nav-menu.spec.ts` | Ajustar de 2 a 1 opción deshabilitada y afirmar que “Agregar método de pago” navega a `/metodos-pago/nuevo`. |
+| Spec                              | Casos                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add-payment-method.spec.ts`      | Valores iniciales; submit deshabilitado con form inválido; error visible al tocar un campo; no guarda al enviar (abre confirmación); confirmar llama `addPaymentMethod` con el request mapeado; “registrar otro” limpia y enfoca `#name`; “ir al resumen” navega a `/dashboard`; fallo del guardado conserva los datos; “Limpiar” vuelve a los iniciales con validadores activos. |
+| Tope del número (misma spec)      | Tarjeta: 17 dígitos → 16; cuenta: 21 → 20; cambio de cuenta (20) a tarjeta recorta a 16; letras se descartan; Binance acepta vacío y recorta a 16.                                                                                                                                                                                                                                |
+| `payment-methods.schemas.spec.ts` | Tarjeta exige 16 y rechaza 20; cuenta exige 20 y rechaza 16; nombre 2/51; descripción `''` válida y `'ab'` inválida; Binance sin número válido y con 16 válido (15/17 inválidos).                                                                                                                                                                                                 |
+| `payment-method.mapper.spec.ts`   | `trim`, vacíos → `undefined`, mapeo completo.                                                                                                                                                                                                                                                                                                                                     |
+| `app.routes.spec.ts`              | `/metodos-pago/nuevo` monta `app-add-payment-method` dentro del layout; `/metodos-pago` redirige a `nuevo`.                                                                                                                                                                                                                                                                       |
+| `nav-menu.spec.ts`                | Ajustar de 2 a 1 opción deshabilitada y afirmar que “Agregar método de pago” navega a `/metodos-pago/nuevo`.                                                                                                                                                                                                                                                                      |
 
 Comandos:
 
@@ -415,3 +415,11 @@ warning heredado de `add-movement.scss`.
 - El tope de tecleo se apoya en `beforeinput` (navegador) y en el saneo de `input` (jsdom); no en
   `maxlength`, que el compilador de Signal Forms rechaza junto a `[formField]`.
 - El foco dentro del diálogo se verifica en navegador; jsdom no calcula layout.
+
+---
+
+## 9. Siguiente módulo
+
+El listado, la actualización y la eliminación se planifican en
+`components/list-payment-methods/plan.md`. Cuando ese módulo exista, el redirect de `''` a `nuevo`
+cambia y esta pantalla deja de ser la única del módulo.

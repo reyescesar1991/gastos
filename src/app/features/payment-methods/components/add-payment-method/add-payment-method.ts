@@ -6,7 +6,6 @@ import { ConfirmDialogService } from '../../../../shared/components/confirm-dial
 import type { DialogFact } from '../../../../shared/models/dialog/confirm-dialog.model';
 import type { AddPaymentMethodForm } from '../../models/add-payment-method-form.model';
 import { createInitialAddPaymentMethodForm } from '../../models/add-payment-method-form.model';
-import type { AddPaymentMethodRequest } from '../../models/add-payment-method-request.model';
 import { PaymentMethodMapper } from '../../models/payment-method.mapper';
 import type { PaymentMethodType } from '../../models/payment-method.model';
 import {
@@ -20,6 +19,7 @@ import {
   PAYMENT_METHOD_NUMBER_MAX_LENGTH,
   paymentMethodSchema,
 } from '../../schemas/payment-methods.schemas';
+import { PaymentMethodRequest } from '../../models/add-payment-method-request.model';
 
 /**
  * Pantalla de registro de un método de pago.
@@ -218,7 +218,7 @@ export class AddPaymentMethod {
   }
 
   /** Resumen campo-valor del método de pago, para la confirmación. */
-  private factsOf(request: AddPaymentMethodRequest): DialogFact[] {
+  private factsOf(request: PaymentMethodRequest): DialogFact[] {
     return [
       { label: 'Tipo', value: PAYMENT_METHOD_TYPE_LABELS[request.type] },
       { label: 'Nombre', value: request.name },

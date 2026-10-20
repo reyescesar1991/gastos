@@ -1,7 +1,7 @@
 import { PaymentMethodCurrency, PaymentMethodType } from "./payment-method.model";
 
 
-export interface AddPaymentMethodRequest {
+export interface PaymentMethodRequest {
 
     name: string,
     type: PaymentMethodType,

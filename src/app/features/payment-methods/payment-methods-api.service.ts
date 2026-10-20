@@ -6,7 +6,7 @@ import { PaymentMethodDto } from "./models/payment-method.dto";
 import { of } from "rxjs/internal/observable/of";
 import { delay } from "rxjs/internal/operators/delay";
 import { PAYMENT_METHODS_USER_MOCK } from "./mocks/payment-methods.response.mock";
-import { AddPaymentMethodRequest } from "./models/add-payment-method-request.model";
+import { PaymentMethodRequest } from "./models/add-payment-method-request.model";
 
 @Injectable({ providedIn: 'root' })
 export class PaymentMethodsApiService {
@@ -22,10 +22,24 @@ export class PaymentMethodsApiService {
         return this.httpClient.get<ApiSuccessResponse<PaymentMethodDto[]>>('/payment-methods');
     }
 
-    addPaymentMethod(addPaymentMethodRequest: AddPaymentMethodRequest) : Observable<ApiSuccessResponse<void>> {
+    addPaymentMethod(addPaymentMethodRequest: PaymentMethodRequest) : Observable<ApiSuccessResponse<void>> {
         if(this.useMock){
             return of({statusCode: 200, message: 'Metodo de pago creado con éxito', data: undefined}).pipe(delay(500));
         }
         return this.httpClient.post<ApiSuccessResponse<void>>('/payment-methods', addPaymentMethodRequest);
+    }
+
+    updatePaymentMethod(updatePaymentMethodRequest : Partial<PaymentMethodRequest>) : Observable<ApiSuccessResponse<void>> {
+        if(this.useMock){
+            return of({statusCode: 200, message: 'Metodo de pago actualizado con éxito', data: undefined}).pipe(delay(500));
+        }
+        return this.httpClient.put<ApiSuccessResponse<void>>('/payment-methods', updatePaymentMethodRequest);
+    }
+
+    deletePaymentMethod(paymentMethodId : number) : Observable<ApiSuccessResponse<void>> {
+        if(this.useMock){
+            return of({statusCode: 200, message: 'Metodo de pago eliminado con éxito', data: undefined}).pipe(delay(500));
+        }
+        return this.httpClient.delete<ApiSuccessResponse<void>>(`/payment-methods/delete`, {params: {paymentMethodId}});
     }
 }
