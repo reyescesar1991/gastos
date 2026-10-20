@@ -9,6 +9,7 @@ import { createInitialAddPaymentMethodForm } from '../../models/add-payment-meth
 import { PaymentMethodMapper } from '../../models/payment-method.mapper';
 import type { PaymentMethodType } from '../../models/payment-method.model';
 import {
+  PAYMENT_METHOD_NUMBER_LABELS,
   PAYMENT_METHOD_TYPE_LABELS,
   PAYMENT_METHOD_TYPE_OPTIONS,
 } from '../../models/payment-method-type.model';
@@ -89,16 +90,9 @@ export class AddPaymentMethod {
   protected readonly numberRequired = computed(() => this.paymentMethodModel().type !== 'binance');
 
   /** Etiqueta del número, que cambia con el tipo elegido. */
-  protected readonly numberLabel = computed(() => {
-    switch (this.paymentMethodModel().type) {
-      case 'account':
-        return 'Número de cuenta';
-      case 'binance':
-        return 'Número de la tarjeta Binance (opcional)';
-      default:
-        return 'Número de tarjeta';
-    }
-  });
+  protected readonly numberLabel = computed(
+    () => PAYMENT_METHOD_NUMBER_LABELS[this.paymentMethodModel().type],
+  );
 
   /** Indica si hay un guardado en curso, para bloquear el envío. */
   protected readonly isSaving = this.paymentMethodsStore.isLoading;

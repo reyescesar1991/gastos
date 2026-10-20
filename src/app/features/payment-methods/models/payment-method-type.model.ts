@@ -25,6 +25,19 @@ export const PAYMENT_METHOD_TYPE_LABELS: Record<PaymentMethodType, string> = {
 };
 
 /**
+ * Etiqueta del campo número según el tipo.
+ *
+ * En Binance el número es opcional, y la etiqueta lo dice para que el usuario no
+ * lo confunda con un campo obligatorio. Se comparte entre el alta y el modal de
+ * actualización para que ambos formularios hablen igual.
+ */
+export const PAYMENT_METHOD_NUMBER_LABELS: Record<PaymentMethodType, string> = {
+  card: 'Número de tarjeta',
+  account: 'Número de cuenta',
+  binance: 'Número de la tarjeta Binance (opcional)',
+};
+
+/**
  * Opciones del selector, con la tarjeta primero por ser el caso más frecuente.
  *
  * El orden es de presentación: el valor por defecto lo fija

@@ -1,0 +1,144 @@
+<h2 class="update__title" id="update-title">Actualizar método de pago</h2>
+
+<p class="update__subtitle">Solo se guardan los campos que cambies.</p>
+
+@if (store.error(); as error) {
+  <p class="update__alert" role="alert">{{ error }}</p>
+}
+
+<form class="update__form" novalidate (submit)="onSubmit($event)">
+  <fieldset class="field">
+    <legend class="field__label">Tipo</legend>
+
+    <div class="segmented">
+      @for (option of typeOptions; track option.value) {
+        <label class="segmented__option">
+          <input
+            class="segmented__input"
+            type="radio"
+            [value]="option.value"
+            [formField]="formTree.type"
+            (input)="onTypeChange(option.value)"
+          />
+          <span class="segmented__label">{{ option.shortLabel }}</span>
+        </label>
+      }
+    </div>
+
+    @if (formTree.type().touched() && formTree.type().invalid()) {
+      <ul class="field__errors" role="alert">
+        @for (error of formTree.type().errors(); track $index) {
+          <li>{{ error.message }}</li>
+        }
+      </ul>
+    }
+  </fieldset>
+
+  <div class="update__row">
+    <div class="field">
+      <div class="field__row">
+        <label class="field__label" for="update-name">Nombre</label>
+        <span class="field__counter" id="update-name-counter">
+          {{ model().name.length }}/{{ nameMaxLength }}
+        </span>
+      </div>
+      <input
+        class="field__input"
+        id="update-name"
+        type="text"
+        autocomplete="off"
+        aria-describedby="update-name-counter"
+        [attr.aria-invalid]="formTree.name().touched() && formTree.name().invalid()"
+        [class.field__input--invalid]="formTree.name().touched() && formTree.name().invalid()"
+        [formField]="formTree.name"
+      />
+      @if (formTree.name().touched() && formTree.name().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of formTree.name().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="update-currency">Moneda</label>
+      <select class="field__input" id="update-currency" [formField]="formTree.currency">
+        @for (currency of currencies; track currency) {
+          <option [value]="currency">{{ currency }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="field__row">
+      <label class="field__label" for="update-number">{{ numberLabel() }}</label>
+      <span class="field__counter" id="update-number-counter">
+        {{ model().number.length }}/{{ numberMaxLength() }}
+      </span>
+    </div>
+    <input
+      class="field__input field__input--number"
+      id="update-number"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off"
+      aria-describedby="update-number-counter"
+      [attr.aria-required]="numberRequired()"
+      [attr.aria-invalid]="formTree.number().touched() && formTree.number().invalid()"
+      [class.field__input--invalid]="formTree.number().touched() && formTree.number().invalid()"
+      [formField]="formTree.number"
+      (beforeinput)="onNumberBeforeInput($event)"
+      (input)="onNumberInput($event)"
+    />
+    @if (formTree.number().touched() && formTree.number().invalid()) {
+      <ul class="field__errors" role="alert">
+        @for (error of formTree.number().errors(); track $index) {
+          <li>{{ error.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="field">
+    <div class="field__row">
+      <label class="field__label" for="update-description">Descripción (opcional)</label>
+      <span class="field__counter" id="update-description-counter">
+        {{ model().description.length }}/{{ descriptionMaxLength }}
+      </span>
+    </div>
+    <input
+      class="field__input"
+      id="update-description"
+      type="text"
+      autocomplete="off"
+      aria-describedby="update-description-counter"
+      [attr.aria-invalid]="formTree.description().touched() && formTree.description().invalid()"
+      [class.field__input--invalid]="
+        formTree.description().touched() && formTree.description().invalid()
+      "
+      [formField]="formTree.description"
+    />
+    @if (formTree.description().touched() && formTree.description().invalid()) {
+      <ul class="field__errors" role="alert">
+        @for (error of formTree.description().errors(); track $index) {
+          <li>{{ error.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div class="update__actions">
+    <button class="update__button update__button--ghost" type="button" (click)="onCancel()">
+      Cancelar
+    </button>
+    <button
+      class="update__button update__button--primary"
+      type="submit"
+      [disabled]="formTree().invalid() || !formTree().dirty() || isSaving()"
+    >
+      {{ isSaving() ? 'Guardando…' : 'Guardar cambios' }}
+    </button>
+  </div>
+</form>

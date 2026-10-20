@@ -1,9 +1,9 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ToastService } from '../../../../core/services/toast-service';
 import { PaymentMethodsStore } from '../../../../core/stores/paymentMethods/payment-method.store';
 import { AppIcon } from '../../../../shared/components/app-icon/app-icon';
 import { ConfirmDialogService } from '../../../../shared/components/confirm-dialog/confirm-dialog.service';
+import { UpdatePaymentMethodDialogService } from '../update-payment-method-dialog/update-payment-method-dialog.service';
 import type { PaymentMethodModel, PaymentMethodType } from '../../models/payment-method.model';
 import { PAYMENT_METHOD_TYPE_LABELS } from '../../models/payment-method-type.model';
 import { maskPaymentMethodNumber } from '../../utils/payment-method.util';
@@ -13,8 +13,8 @@ import { maskPaymentMethodNumber } from '../../utils/payment-method.util';
  *
  * La lista sale de la store —un computed, para que el alta y la edición se
  * reflejen sin recargar la vista— y la vista se pinta como una tabla que en
- * móvil se reordena en tarjetas. Acá viven la carga inicial, el reintento y el
- * borrado con confirmación; la edición se conecta al modal en la Fase 3.
+ * móvil se reordena en tarjetas. Acá viven la carga inicial, el reintento, el
+ * borrado con confirmación y la apertura del modal de actualización.
  *
  * Los campos opcionales del modelo (`number`, `description`) se presentan con un
  * texto por defecto, y el número siempre va enmascarado: la lista no expone el
@@ -46,8 +46,8 @@ export class ListPaymentMethods implements OnInit {
   /** Confirmación de borrado (CDK Dialog). */
   private readonly confirmDialog = inject(ConfirmDialogService);
 
-  /** Avisos de acciones que todavía no están conectadas. */
-  private readonly toastService = inject(ToastService);
+  /** Modal de actualización (CDK Dialog). */
+  private readonly updateDialog = inject(UpdatePaymentMethodDialogService);
 
   /** Carga la lista al entrar a la vista. */
   ngOnInit(): void {
@@ -77,17 +77,16 @@ export class ListPaymentMethods implements OnInit {
   }
 
   /**
-   * Abre la edición del método.
+   * Abre el modal de actualización con el método elegido.
    *
-   * El modal de actualización llega en la Fase 3; mientras tanto la acción
-   * responde con un aviso, igual que las opciones del menú que aún no tienen
-   * vista, en vez de dejar el botón sin efecto.
+   * Se limpian los mensajes de la operación anterior para que el modal no nazca
+   * con un error ajeno; al guardar, la store refresca la lista y el cambio se
+   * refleja sin recargar la vista.
    */
-  protected onUpdate(paymentMethod: PaymentMethodModel): void {
+  protected async onUpdate(paymentMethod: PaymentMethodModel): Promise<void> {
     this.paymentMethodsStore.resetFeedback();
-    this.toastService.info(`La edición de «${paymentMethod.name}» estará disponible pronto.`, {
-      duration: 4000,
-    });
+
+    await this.updateDialog.open(paymentMethod);
   }
 
   /**

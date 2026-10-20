@@ -174,8 +174,7 @@ protected readonly hasPaymentMethods = this.paymentMethodsStore.hasPaymentMethod
   - número: `maskPaymentMethodNumber()` → `•••• 1234` o `Sin número`;
   - descripción: `Sin descripción`.
 - Acciones:
-  - `onUpdate(method)`: `resetFeedback()` + `updateDialog.open(method)`. Mientras el modal no exista
-    (Fase 2), la acción avisa con un toast en vez de quedar sin efecto.
+  - `onUpdate(method)`: `resetFeedback()` + `updateDialog.open(method)`.
   - `onDelete(method)`: `resetFeedback()` + confirmación + `deletePaymentMethod(method.id)`.
 - Sin estado duplicado: loading, error y mensajes salen de la store.
 
@@ -484,7 +483,7 @@ Checklist manual (390×844 y 1280×800):
 | C   | Persistencia del mock  | **Sí**, en memoria de la instancia del servicio.                                                                                                      |
 | D   | Backend                | **Supabase**: `PATCH /rest/v1/payment_methods?id=eq.{id}` con body parcial. La Data API filtra por query param; el id del body no selecciona la fila. |
 
-Decisiones cerradas. Fases 1 y 2 completadas; pausa antes de la Fase 3.
+Decisiones cerradas. Fases 1 a 3 completadas; pausa antes de la Fase 4.
 
 ---
 
@@ -510,19 +509,22 @@ con el warning heredado de `add-movement.scss`.
   lee como tarjetas en móvil y acciones con nombre accesible.
 - Glifos `pencil` y `trash` en `app-icon`.
 - Specs: lista (7 casos) y utilidades (7 casos).
-- El botón “Actualizar” responde con un aviso hasta que la Fase 3 conecte el modal.
+- El botón “Actualizar” queda conectado al modal en la Fase 3.
 
 **Verificación:** `npx ng test --watch=false` → 179/179 en 28 archivos; `npx ng build` → exit 0,
 con el warning heredado de `add-movement.scss` y el nuevo aviso de 7,25 kB de la lista (bajo el
 límite de error de 8 kB).
 
-### Fase 3 — Modal de actualización
+### Fase 3 — Modal de actualización (completada)
 
-- `components/update-payment-method-dialog/*` + su servicio.
-- Cableado de “Actualizar” en la lista (reemplaza el aviso temporal) y specs de integración del
-  modal.
+- `components/update-payment-method-dialog/*` con formulario precargado, schema compartido, diff
+  parcial y cierre solo si la store confirma; más su servicio de CDK Dialog.
+- `PAYMENT_METHOD_NUMBER_LABELS` compartido entre el alta y el modal.
+- El botón “Actualizar” de la lista abre el modal y la spec de integración verifica la precarga.
+- Specs: modal (8 casos) e integración de la lista (1 caso nuevo).
 
-**Verificación:** tests del modal y de la lista en verde; build exit 0.
+**Verificación:** `npx ng test --watch=false` → 188/188 en 29 archivos; `npx ng build` → exit 0, con
+los dos avisos de presupuesto ya conocidos (`add-movement` y la lista).
 
 ### Fase 4 — Rutas, menú y cierre
 

@@ -13,9 +13,8 @@ import { ListPaymentMethods } from './list-payment-methods';
  * Pruebas de la administración de métodos de pago.
  *
  * Cubren la carga al entrar, los estados de carga, error y vacío, la tabla con
- * sus valores por defecto y el borrado con confirmación. La edición todavía no
- * se conecta al modal (Fase 3), así que acá solo se verifica que la acción
- * exista con su nombre accesible.
+ * sus valores por defecto, el borrado con confirmación y la apertura del modal
+ * de actualización con el método elegido.
  */
 describe('ListPaymentMethods', () => {
   let fixture: ComponentFixture<ListPaymentMethods>;
@@ -95,10 +94,10 @@ describe('ListPaymentMethods', () => {
     await settle();
   }
 
-  /** Pulsa un botón del diálogo y espera a que se cierre. */
-  async function clickDialog(selector: string): Promise<void> {
+  /** Pulsa un botón del diálogo y espera a que el título indicado desaparezca. */
+  async function clickDialog(selector: string, titleSelector = '.confirm__title'): Promise<void> {
     (document.querySelector(selector) as HTMLButtonElement).click();
-    await waitUntil(() => expect(document.querySelector('.confirm__title')).toBeNull());
+    await waitUntil(() => expect(document.querySelector(titleSelector)).toBeNull());
   }
 
   beforeEach(async () => {
@@ -213,5 +212,18 @@ describe('ListPaymentMethods', () => {
     await clickDialog('.confirm__button--confirm');
 
     expect(deleteSpy).toHaveBeenCalledWith(2);
+  });
+
+  it('abre el modal de actualización con los datos del método', async () => {
+    await render({ paymentMethods: methods, isLoading: false });
+
+    (fixture.nativeElement.querySelector('.icon-btn') as HTMLButtonElement).click();
+    await waitUntil(() => expect(document.querySelector('.update__title')).not.toBeNull());
+
+    expect((document.querySelector('#update-name') as HTMLInputElement).value).toBe(
+      'Tarjeta principal',
+    );
+
+    await clickDialog('.update__button--ghost', '.update__title');
   });
 });
