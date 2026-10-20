@@ -15,7 +15,9 @@ export type IconName =
   | 'arrow-down'
   | 'sun'
   | 'moon'
-  | 'monitor';
+  | 'monitor'
+  | 'pencil'
+  | 'trash';
 
 /** Tamaños soportados por el icono. */
 export type IconSize = 'sm' | 'md' | 'lg';

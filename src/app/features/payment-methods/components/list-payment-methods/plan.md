@@ -174,7 +174,8 @@ protected readonly hasPaymentMethods = this.paymentMethodsStore.hasPaymentMethod
   - número: `maskPaymentMethodNumber()` → `•••• 1234` o `Sin número`;
   - descripción: `Sin descripción`.
 - Acciones:
-  - `onUpdate(method)`: `resetFeedback()` + `updateDialog.open(method)`.
+  - `onUpdate(method)`: `resetFeedback()` + `updateDialog.open(method)`. Mientras el modal no exista
+    (Fase 2), la acción avisa con un toast en vez de quedar sin efecto.
   - `onDelete(method)`: `resetFeedback()` + confirmación + `deletePaymentMethod(method.id)`.
 - Sin estado duplicado: loading, error y mensajes salen de la store.
 
@@ -258,8 +259,9 @@ Reflow móvil (una sola DOM, sin duplicar markup):
 - Botón primario sólido `--ink`; botones icono con borde `--border` y hover `--surface-muted`.
 - Animación de entrada `translateY(12px)` + `opacity` con `--index` escalonado y
   `@media (prefers-reduced-motion: reduce)`.
-- Presupuesto: `anyComponentStyle` avisa a 4 kB y falla a 8 kB. La lista debe quedar por debajo de
-  4 kB; si no, se recorta antes de tocar `angular.json`.
+- Presupuesto: `anyComponentStyle` avisa a 4 kB y falla a 8 kB. El reflow completo quedó en
+  **7,25 kB** (bajo el error): se acepta el aviso antes que tocar la configuración global o
+  duplicar el markup para dividir estilos.
 
 ### 3.4 Modal de actualización (punto 4)
 
@@ -482,7 +484,7 @@ Checklist manual (390×844 y 1280×800):
 | C   | Persistencia del mock  | **Sí**, en memoria de la instancia del servicio.                                                                                                      |
 | D   | Backend                | **Supabase**: `PATCH /rest/v1/payment_methods?id=eq.{id}` con body parcial. La Data API filtra por query param; el id del body no selecciona la fila. |
 
-Decisiones cerradas. Fase 1 completada; pausa antes de la Fase 2.
+Decisiones cerradas. Fases 1 y 2 completadas; pausa antes de la Fase 3.
 
 ---
 
@@ -500,19 +502,25 @@ Decisiones cerradas. Fase 1 completada; pausa antes de la Fase 2.
 **Verificación:** `npx ng test --watch=false` → 166/166 en 27 archivos; `npx ng build` → exit 0,
 con el warning heredado de `add-movement.scss`.
 
-### Fase 2 — Lista y estilos
+### Fase 2 — Lista y estilos (completada)
 
-- `utils/payment-method.util.ts` y refactor del alta para consumirlo.
-- `list-payment-methods.ts|html|scss` (secciones 3.1–3.3).
+- `utils/payment-method.util.ts` con `maskPaymentMethodNumber()` y `sanitizePaymentMethodNumber()`;
+  el alta pasó a usarlas.
+- `list-payment-methods.ts|html|scss`: carga, reintento, estados de carga/error/vacío, tabla que se
+  lee como tarjetas en móvil y acciones con nombre accesible.
 - Glifos `pencil` y `trash` en `app-icon`.
-- `list-payment-methods.spec.ts` (sin los flujos de modal).
+- Specs: lista (7 casos) y utilidades (7 casos).
+- El botón “Actualizar” responde con un aviso hasta que la Fase 3 conecte el modal.
 
-**Verificación:** tests de lista y del alta en verde; `ng build` sin warnings de presupuesto.
+**Verificación:** `npx ng test --watch=false` → 179/179 en 28 archivos; `npx ng build` → exit 0,
+con el warning heredado de `add-movement.scss` y el nuevo aviso de 7,25 kB de la lista (bajo el
+límite de error de 8 kB).
 
 ### Fase 3 — Modal de actualización
 
 - `components/update-payment-method-dialog/*` + su servicio.
-- Cableado de “Actualizar” en la lista y specs de integración del modal.
+- Cableado de “Actualizar” en la lista (reemplaza el aviso temporal) y specs de integración del
+  modal.
 
 **Verificación:** tests del modal y de la lista en verde; build exit 0.
 
@@ -542,4 +550,6 @@ pendiente de ejecución en navegador.
 - Si `getPaymentMethods()` falla después de un update/delete, la store igual reporta éxito (bug
   heredado); la lista queda con datos viejos y la alerta de error.
 - El reflow de la tabla con `display` se valida en navegador; jsdom no calcula layout.
+- El SCSS de la lista supera el aviso de 4 kB (7,25 kB) y se mantiene bajo el error de 8 kB; si el
+  equipo quiere el build sin avisos, hay que subir el presupuesto o dividir la vista en componentes.
 - `authInterceptor` sin registrar y layout sin `authGuard`: estado heredado de la app.

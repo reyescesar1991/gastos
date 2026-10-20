@@ -1,1 +1,111 @@
-<p>list-payment-methods works!</p>
+<section class="methods" aria-labelledby="methods-title">
+  <header class="methods__intro">
+    <div class="methods__heading">
+      <span class="methods__tag">Medios de pago</span>
+      <h1 class="methods__title" id="methods-title">Mis métodos de pago</h1>
+      <p class="methods__subtitle">
+        Administra las tarjetas y cuentas con las que registras tus movimientos.
+      </p>
+    </div>
+
+    <a class="btn btn--primary methods__add" routerLink="/metodos-pago/nuevo">
+      <app-icon name="plus" size="sm" />
+      Agregar método de pago
+    </a>
+  </header>
+
+  @if (paymentMethodsStore.error(); as error) {
+    <div class="methods__alert" role="alert">
+      <p>{{ error }}</p>
+      <button class="btn btn--ghost methods__retry" type="button" (click)="onRetry()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  @if (paymentMethodsStore.isLoading() && !hasPaymentMethods()) {
+    <p class="methods__status" role="status">Cargando métodos de pago…</p>
+  } @else if (hasPaymentMethods()) {
+    <table class="methods__table" [attr.aria-busy]="paymentMethodsStore.isLoading()">
+      <caption class="visually-hidden">
+        Métodos de pago registrados
+      </caption>
+
+      <thead>
+        <tr>
+          <th scope="col">Método</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Número</th>
+          <th scope="col">Moneda</th>
+          <th scope="col">Descripción</th>
+          <th scope="col"><span class="visually-hidden">Acciones</span></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (paymentMethod of paymentMethods(); track paymentMethod.id; let index = $index) {
+          <tr class="methods__row" [attr.data-type]="paymentMethod.type" [style.--index]="index">
+            <th class="methods__method" scope="row">
+              <span class="methods__name">{{ paymentMethod.name }}</span>
+              <span class="methods__id">#{{ paymentMethod.id }}</span>
+            </th>
+
+            <td class="methods__cell" data-label="Tipo">
+              <span class="methods__chip">{{ typeLabel(paymentMethod.type) }}</span>
+            </td>
+
+            <td class="methods__cell methods__mono" data-label="Número">
+              {{ numberLabel(paymentMethod) }}
+            </td>
+
+            <td class="methods__cell methods__mono" data-label="Moneda">
+              {{ paymentMethod.currency }}
+            </td>
+
+            <td
+              class="methods__cell"
+              data-label="Descripción"
+              [attr.title]="descriptionTitle(paymentMethod)"
+            >
+              <span class="methods__description">{{ descriptionLabel(paymentMethod) }}</span>
+            </td>
+
+            <td class="methods__actions">
+              <div class="methods__actions-row">
+                <button
+                  class="icon-btn"
+                  type="button"
+                  [attr.aria-label]="'Actualizar ' + paymentMethod.name"
+                  [disabled]="paymentMethodsStore.isLoading()"
+                  (click)="onUpdate(paymentMethod)"
+                >
+                  <app-icon name="pencil" size="sm" />
+                </button>
+
+                <button
+                  class="icon-btn icon-btn--danger"
+                  type="button"
+                  [attr.aria-label]="'Eliminar ' + paymentMethod.name"
+                  [disabled]="paymentMethodsStore.isLoading()"
+                  (click)="onDelete(paymentMethod)"
+                >
+                  <app-icon name="trash" size="sm" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <p class="methods__count">{{ methodsCount() }}</p>
+  } @else if (!paymentMethodsStore.error()) {
+    <div class="methods__empty">
+      <p class="methods__empty-title">Aún no tienes métodos de pago.</p>
+      <p class="methods__empty-text">
+        Agrega una tarjeta o cuenta para reconocerla en tus próximos movimientos.
+      </p>
+      <a class="methods__empty-link" routerLink="/metodos-pago/nuevo"> Agregar método de pago </a>
+    </div>
+  }
+</section>

@@ -20,6 +20,10 @@ import {
   paymentMethodSchema,
 } from '../../schemas/payment-methods.schemas';
 import { PaymentMethodRequest } from '../../models/add-payment-method-request.model';
+import {
+  maskPaymentMethodNumber,
+  sanitizePaymentMethodNumber,
+} from '../../utils/payment-method.util';
 
 /**
  * Pantalla de registro de un método de pago.
@@ -121,9 +125,7 @@ export class AddPaymentMethod {
    * usuario no puede corregir sin borrar: se conservan los primeros dígitos.
    */
   protected onTypeChange(type: PaymentMethodType): void {
-    const number = this.paymentMethodModel()
-      .number.replace(/\D/g, '')
-      .slice(0, PAYMENT_METHOD_NUMBER_MAX_LENGTH[type]);
+    const number = sanitizePaymentMethodNumber(this.paymentMethodModel().number, type);
 
     if (number !== this.paymentMethodModel().number) {
       this.paymentMethodForm.number().value.set(number);
@@ -157,7 +159,7 @@ export class AddPaymentMethod {
    */
   protected onNumberInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const value = input.value.replace(/\D/g, '').slice(0, this.numberMaxLength());
+    const value = sanitizePaymentMethodNumber(input.value, this.paymentMethodModel().type);
 
     if (value !== input.value) {
       input.value = value;
@@ -222,20 +224,10 @@ export class AddPaymentMethod {
     return [
       { label: 'Tipo', value: PAYMENT_METHOD_TYPE_LABELS[request.type] },
       { label: 'Nombre', value: request.name },
-      { label: 'Número', value: this.maskNumber(request.number), mono: true },
+      { label: 'Número', value: maskPaymentMethodNumber(request.number), mono: true },
       { label: 'Descripción', value: request.description ?? 'Sin descripción' },
       { label: 'Moneda', value: request.currency, mono: true },
     ];
-  }
-
-  /**
-   * Deja visibles solo los últimos cuatro dígitos.
-   *
-   * El número completo no se repite en el diálogo: alcanza para reconocer la
-   * tarjeta o cuenta sin exponerla en pantalla.
-   */
-  private maskNumber(number?: string): string {
-    return number ? `•••• ${number.slice(-4)}` : 'Sin número';
   }
 
   /**
