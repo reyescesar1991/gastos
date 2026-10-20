@@ -7,6 +7,7 @@ import { firstValueFrom } from "rxjs/internal/firstValueFrom";
 import { PaymentMethodMapper } from "../../../features/payment-methods/models/payment-method.mapper";
 import { ErrorUtils } from "../../utils/error-handler.util";
 import { PaymentMethodRequest } from "../../../features/payment-methods/models/add-payment-method-request.model";
+import { UpdatePaymentMethodRequest } from "../../../features/payment-methods/models/update-payment-method-request.model";
 
 
 export interface PaymentMethodState {
@@ -89,7 +90,7 @@ export const PaymentMethodsStore = signalStore(
                     }
                 },
 
-                async updatePaymentMethod(request : Partial<PaymentMethodRequest>) : Promise<boolean> {
+                async updatePaymentMethod(request : UpdatePaymentMethodRequest) : Promise<boolean> {
                     
                     patchState(store, { isLoading: true, error: null, successMessage: null });
     

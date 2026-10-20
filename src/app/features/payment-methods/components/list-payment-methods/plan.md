@@ -482,21 +482,23 @@ Checklist manual (390×844 y 1280×800):
 | C   | Persistencia del mock  | **Sí**, en memoria de la instancia del servicio.                                                                                                      |
 | D   | Backend                | **Supabase**: `PATCH /rest/v1/payment_methods?id=eq.{id}` con body parcial. La Data API filtra por query param; el id del body no selecciona la fila. |
 
-Decisiones cerradas; la Fase 1 puede comenzar.
+Decisiones cerradas. Fase 1 completada; pausa antes de la Fase 2.
 
 ---
 
 ## 7. Fases de ejecución
 
-### Fase 1 — Contrato, mapper y mock
+### Fase 1 — Contrato, mapper y mock (completada)
 
 - `models/update-payment-method-request.model.ts` y `models/update-payment-method-dialog.model.ts`.
 - `createPaymentMethodFormFromModel()` en `add-payment-method-form.model.ts`.
-- `PaymentMethodMapper.toUpdateRequest()`.
-- Firma nueva en store y servicio; mock persistente por instancia.
-- Specs del mapper y del servicio.
+- `PaymentMethodMapper.toUpdateRequest()` con diff, `trim()` y vaciado explícito.
+- Firma nueva en store y servicio; mock persistente por instancia para alta, edición y borrado.
+- Specs del mapper (9 casos) y del servicio (5 casos).
+- Corregido un import obsoleto del mapper (`AddPaymentMethodRequest` → `PaymentMethodRequest`).
 
-**Verificación:** tests de mapper y servicio en verde.
+**Verificación:** `npx ng test --watch=false` → 166/166 en 27 archivos; `npx ng build` → exit 0,
+con el warning heredado de `add-movement.scss`.
 
 ### Fase 2 — Lista y estilos
 
