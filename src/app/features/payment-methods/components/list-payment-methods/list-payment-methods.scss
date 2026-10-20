@@ -370,15 +370,24 @@
     flex: 0 0 auto;
     width: auto;
   }
+}
+
+/* Tabla real: las seis columnas necesitan ancho suficiente. Por debajo de
+   1024px la vista sigue en tarjetas para no comprimir los datos; el wrapper
+   contiene cualquier desborde sin arrastrar a toda la página. */
+@media (min-width: 1024px) {
+  .methods__table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--surface);
+  }
 
   .methods__table {
     display: table;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background-color: var(--surface);
   }
 
   .methods__table thead {
@@ -396,10 +405,16 @@
     display: table-row-group;
   }
 
+  /* También el `tr` del thead: en móvil es bloque y sin esto la cabecera
+     pierde las columnas del cuerpo y se comprime a la izquierda. */
+  .methods__table tr {
+    display: table-row;
+  }
+
   .methods__table th,
   .methods__table td {
     display: table-cell;
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3);
     border-bottom: 1px solid var(--border);
     text-align: left;
     vertical-align: middle;
@@ -416,7 +431,6 @@
   }
 
   .methods__row {
-    display: table-row;
     padding: 0;
     border: none;
     border-radius: 0;

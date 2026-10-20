@@ -42,7 +42,18 @@ describe('NavMenu', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NavMenu],
-      providers: [provideRouter([{ path: 'movimientos', children: [] }])],
+      providers: [
+        provideRouter([
+          { path: 'movimientos', children: [] },
+          {
+            path: 'metodos-pago',
+            children: [
+              { path: '', children: [] },
+              { path: 'nuevo', children: [] },
+            ],
+          },
+        ]),
+      ],
     }).compileComponents();
 
     store = TestBed.inject(NavStore);
@@ -103,6 +114,51 @@ describe('NavMenu', () => {
 
     children[1].click();
     expect(navigate).toHaveBeenCalledWith('/metodos-pago/nuevo');
+  });
+
+  it('marca el padre y solo la subhija de la ruta actual', async () => {
+    await router.navigateByUrl('/metodos-pago/nuevo');
+    await fixture.whenStable();
+
+    const paymentMethods = links()[2];
+
+    paymentMethods.click();
+    await fixture.whenStable();
+
+    const children = Array.from(
+      fixture.nativeElement.querySelectorAll('.nav-menu__link--child'),
+    ) as HTMLButtonElement[];
+
+    expect(paymentMethods.classList.contains('nav-menu__link--active')).toBe(true);
+
+    // La subhija del listado comparte prefijo con `/metodos-pago/nuevo`, pero no
+    // es la ruta actual: debe quedar sin marcar.
+    expect(children[0].textContent).toContain('Mis métodos de pago');
+    expect(children[0].classList.contains('nav-menu__link--active')).toBe(false);
+    expect(children[0].getAttribute('aria-current')).toBeNull();
+
+    expect(children[1].textContent).toContain('Agregar método de pago');
+    expect(children[1].classList.contains('nav-menu__link--active')).toBe(true);
+    expect(children[1].getAttribute('aria-current')).toBe('page');
+  });
+
+  it('marca la subhija del listado al abrir su ruta exacta', async () => {
+    await router.navigateByUrl('/metodos-pago');
+    await fixture.whenStable();
+
+    const paymentMethods = links()[2];
+
+    paymentMethods.click();
+    await fixture.whenStable();
+
+    const children = Array.from(
+      fixture.nativeElement.querySelectorAll('.nav-menu__link--child'),
+    ) as HTMLButtonElement[];
+
+    expect(paymentMethods.classList.contains('nav-menu__link--active')).toBe(true);
+    expect(children[0].classList.contains('nav-menu__link--active')).toBe(true);
+    expect(children[1].classList.contains('nav-menu__link--active')).toBe(false);
+    expect(children[1].getAttribute('aria-current')).toBeNull();
   });
 
   it('navega a la opción habilitada sin marca de inactividad', () => {

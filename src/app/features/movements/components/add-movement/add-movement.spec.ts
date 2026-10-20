@@ -2,8 +2,13 @@ import { provideHttpClient } from '@angular/common/http';
 import { ApplicationRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { patchState } from '@ngrx/signals';
+import { unprotected } from '@ngrx/signals/testing';
 import { MovementsStore } from '../../../../core/stores/movements/movements.store';
+import { PaymentMethodsStore } from '../../../../core/stores/paymentMethods/payment-method.store';
 import { toIsoDate } from '../../../../shared/utils/format.util';
+import { PAYMENT_METHODS_USER_MOCK } from '../../../payment-methods/mocks/payment-methods.response.mock';
+import { PaymentMethodMapper } from '../../../payment-methods/models/payment-method.mapper';
 import { AddMovement } from './add-movement';
 
 /**
@@ -24,6 +29,7 @@ import { AddMovement } from './add-movement';
 describe('AddMovement', () => {
   let fixture: ComponentFixture<AddMovement>;
   let store: InstanceType<typeof MovementsStore>;
+  let paymentMethodsStore: InstanceType<typeof PaymentMethodsStore>;
   let router: Router;
 
   /** Campo del formulario por selector. */
@@ -90,6 +96,30 @@ describe('AddMovement', () => {
     fixture.detectChanges();
   }
 
+  /** Sugerencias visibles del desplegable de categorías. */
+  function categoryOptions(): HTMLElement[] {
+    return Array.from(
+      fixture.nativeElement.querySelectorAll('#movement-categories .field__option'),
+    );
+  }
+
+  /** Opciones visibles del desplegable de métodos de pago. */
+  function paymentMethodOptions(): HTMLElement[] {
+    return Array.from(
+      fixture.nativeElement.querySelectorAll('#movement-payment-methods .field__option'),
+    );
+  }
+
+  /** Enfoca el selector de método de pago, que es lo que despliega la lista. */
+  function openPaymentMethods(): HTMLInputElement {
+    const field = input('#payment-method');
+
+    field.dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+
+    return field;
+  }
+
   /** Mensajes de error visibles, como los lee el usuario. */
   function errorMessages(): string[] {
     return Array.from(fixture.nativeElement.querySelectorAll('.field__errors li')).map(
@@ -104,7 +134,9 @@ describe('AddMovement', () => {
 
   /** Texto del título del diálogo abierto. */
   function dialogTitle(): string {
-    return (document.querySelector('.confirm__title') as HTMLElement | null)?.textContent?.trim() ?? '';
+    return (
+      (document.querySelector('.confirm__title') as HTMLElement | null)?.textContent?.trim() ?? ''
+    );
   }
 
   /** Resumen campo-valor del diálogo de confirmación, como pares etiqueta/valor. */
@@ -113,7 +145,7 @@ describe('AddMovement', () => {
 
     for (const row of Array.from(document.querySelectorAll('.facts__row'))) {
       const term = (row.querySelector('.facts__term')?.textContent ?? '').trim();
-        // `\s` también cubre el espacio fino que `Intl` mete en los importes, para
+      // `\s` también cubre el espacio fino que `Intl` mete en los importes, para
       // que la comparación con los literales no dependa de ese carácter invisible.
       const value = (row.querySelector('.facts__value')?.textContent ?? '')
         .replace(/\s+/g, ' ')
@@ -175,6 +207,14 @@ describe('AddMovement', () => {
 
     store = TestBed.inject(MovementsStore);
     router = TestBed.inject(Router);
+    paymentMethodsStore = TestBed.inject(PaymentMethodsStore);
+
+    // La lista se siembra antes de montar la vista: así el selector tiene datos
+    // sin esperar la latencia simulada del API y la prueba es determinista.
+    patchState(unprotected(paymentMethodsStore), {
+      paymentMethods: PaymentMethodMapper.toModels(PAYMENT_METHODS_USER_MOCK.data),
+      isLoading: false,
+    });
   });
 
   afterEach(() => {
@@ -239,7 +279,7 @@ describe('AddMovement', () => {
         year: 'numeric',
       }).format(new Date()),
       Descripción: 'Cena con el equipo',
-      'Categoría': 'Sin categoría',
+      Categoría: 'Sin categoría',
     });
   });
 
@@ -326,6 +366,183 @@ describe('AddMovement', () => {
     expect(input('#description').value).toBe('Cena con el equipo');
   });
 
+  it('despliega las categorías sugeridas ancladas al campo', async () => {
+    await render();
+
+    const category = input('#category');
+
+    category.dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+
+    const listbox = fixture.nativeElement.querySelector('.field__listbox') as HTMLElement;
+
+    expect(category.getAttribute('aria-expanded')).toBe('true');
+    expect(category.getAttribute('aria-controls')).toBe('movement-categories');
+    expect(listbox).not.toBeNull();
+    // El desplegable vive dentro del campo: así se posiciona pegado a él.
+    expect(listbox.parentElement).toBe(category.closest('.field__combobox'));
+    expect(categoryOptions().length).toBe(8);
+  });
+
+  it('filtra las sugerencias y elige la categoría con el ratón', async () => {
+    await render();
+
+    const category = input('#category');
+
+    category.dispatchEvent(new Event('focus'));
+    type(category, 'trans');
+
+    expect(categoryOptions().map((option) => option.textContent?.trim())).toEqual(['Transporte']);
+
+    categoryOptions()[0].click();
+    await settle();
+
+    expect(category.value).toBe('Transporte');
+    expect(fixture.nativeElement.querySelector('.field__listbox')).toBeNull();
+  });
+
+  it('recorre las sugerencias con el teclado y cierra con Escape', async () => {
+    await render();
+
+    const category = input('#category');
+
+    category.dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+
+    category.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    fixture.detectChanges();
+
+    expect(categoryOptions()[1].classList.contains('field__option--active')).toBe(true);
+    expect(category.getAttribute('aria-activedescendant')).toBe('movement-category-1');
+
+    category.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    await settle();
+
+    expect(category.value).toBe('Servicios');
+    expect(fixture.nativeElement.querySelector('.field__listbox')).toBeNull();
+
+    category.dispatchEvent(new Event('focus'));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.field__listbox')).not.toBeNull();
+
+    category.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+
+    expect(category.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('despliega los métodos de pago guardados en el selector opcional', async () => {
+    await render();
+
+    const paymentMethod = openPaymentMethods();
+
+    expect(paymentMethod.getAttribute('aria-expanded')).toBe('true');
+    expect(paymentMethod.getAttribute('aria-controls')).toBe('movement-payment-methods');
+    expect(
+      paymentMethodOptions().map((option) =>
+        option.querySelector('.field__option-label')?.textContent?.trim(),
+      ),
+    ).toEqual(['Tarjeta de crédito', 'Cuenta bancaria']);
+    expect(
+      paymentMethodOptions().map((option) =>
+        option.querySelector('.field__option-meta')?.textContent?.trim(),
+      ),
+    ).toEqual(['USD', 'VES']);
+    // El desplegable vive dentro del campo: así se posiciona pegado a él.
+    expect(paymentMethodOptions()[0].closest('.field__combobox')).toBe(
+      paymentMethod.closest('.field__combobox'),
+    );
+  });
+
+  it('filtra los métodos de pago y elige uno con el ratón', async () => {
+    await render();
+
+    const paymentMethod = openPaymentMethods();
+
+    type(paymentMethod, 'cuenta');
+
+    expect(paymentMethodOptions().length).toBe(1);
+
+    paymentMethodOptions()[0].click();
+    await settle();
+
+    expect(paymentMethod.value).toBe('Cuenta bancaria');
+    expect(fixture.nativeElement.querySelector('#movement-payment-methods')).toBeNull();
+  });
+
+  it('envía el método de pago elegido en el request', async () => {
+    await render();
+
+    fillValidForm();
+    openPaymentMethods();
+    paymentMethodOptions()[0].click();
+    await settle();
+
+    await submit();
+    await confirm();
+
+    expect(store.addMovement).toHaveBeenCalledWith(expect.objectContaining({ paymentMethodId: 1 }));
+  });
+
+  it('permite dejar el movimiento sin método de pago', async () => {
+    await render();
+
+    fillValidForm();
+    openPaymentMethods();
+    paymentMethodOptions()[0].click();
+    await settle();
+
+    await click('.field__clear');
+
+    expect(input('#payment-method').value).toBe('');
+
+    await submit();
+    await confirm();
+
+    expect(vi.mocked(store.addMovement).mock.calls[0][0]).not.toHaveProperty('paymentMethodId');
+  });
+
+  it('descarta la búsqueda a medias al salir del campo', async () => {
+    await render();
+
+    const paymentMethod = openPaymentMethods();
+
+    type(paymentMethod, 'cuen');
+
+    // Sin elegir nada, el campo no debe quedar mostrando la búsqueda.
+    paymentMethod.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    fixture.detectChanges();
+
+    expect(paymentMethod.value).toBe('');
+    expect(fixture.nativeElement.querySelector('#movement-payment-methods')).toBeNull();
+  });
+
+  it('recorre los métodos de pago con el teclado y cierra con Escape', async () => {
+    await render();
+
+    const paymentMethod = openPaymentMethods();
+
+    paymentMethod.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    fixture.detectChanges();
+
+    expect(paymentMethodOptions()[1].classList.contains('field__option--active')).toBe(true);
+    expect(paymentMethod.getAttribute('aria-activedescendant')).toBe('movement-payment-method-2');
+
+    paymentMethod.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    await settle();
+
+    expect(paymentMethod.value).toBe('Cuenta bancaria');
+    expect(fixture.nativeElement.querySelector('#movement-payment-methods')).toBeNull();
+
+    openPaymentMethods();
+
+    paymentMethod.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+
+    expect(paymentMethod.getAttribute('aria-expanded')).toBe('false');
+  });
+
   it('limpiar vuelve a los valores iniciales y deja los validadores activos', async () => {
     await render();
 
@@ -340,6 +557,7 @@ describe('AddMovement', () => {
 
     expect(input('#description').value).toBe('');
     expect(input('#amount').value).toBe('1');
+    expect(input('#payment-method').value).toBe('');
     expect(errorMessages()).toEqual([]);
 
     // Los validadores siguen evaluando después de limpiar.

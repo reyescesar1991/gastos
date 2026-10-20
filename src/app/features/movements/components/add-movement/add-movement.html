@@ -126,41 +126,144 @@
         }
       </div>
 
+      <!-- Método de pago: opcional, toma uno de los métodos del usuario -->
       <div class="field">
         <div class="field__row">
-          <label class="field__label" for="category">Categoría (opcional)</label>
-          <span class="field__counter" id="category-counter">
-            {{ movementModel().category.length }}/{{ categoryMaxLength }}
-          </span>
+          <label class="field__label" for="payment-method">Método de pago (opcional)</label>
+          @if (movementModel().paymentMethodId !== undefined) {
+            <button class="field__clear" type="button" (click)="onClearPaymentMethod()">
+              Quitar
+            </button>
+          }
         </div>
+        <!-- Combobox propio: el `select` nativo no se puede filtrar y el
+             `datalist` lo posiciona el navegador. -->
+        <div class="field__combobox" (focusout)="onPaymentMethodFocusOut($event)">
+          <input
+            class="field__input"
+            id="payment-method"
+            type="text"
+            role="combobox"
+            autocomplete="off"
+            aria-autocomplete="list"
+            aria-controls="movement-payment-methods"
+            [attr.aria-expanded]="isPaymentMethodListOpen()"
+            [attr.aria-activedescendant]="activePaymentMethodOptionId()"
+            [value]="paymentMethodText()"
+            (focus)="onPaymentMethodFocus()"
+            (input)="onPaymentMethodInput($event)"
+            (keydown)="onPaymentMethodKeydown($event)"
+          />
+
+          @if (isPaymentMethodListOpen()) {
+            <ul
+              class="field__listbox"
+              id="movement-payment-methods"
+              role="listbox"
+              aria-label="Métodos de pago"
+            >
+              @if (paymentMethodsStore.isLoading()) {
+                <li class="field__listbox-empty" role="presentation">Cargando métodos…</li>
+              } @else if (paymentMethodSuggestions().length === 0) {
+                <li class="field__listbox-empty" role="presentation">Sin coincidencias</li>
+              }
+
+              @for (
+                paymentMethod of paymentMethodSuggestions();
+                track paymentMethod.id;
+                let index = $index
+              ) {
+                <li
+                  class="field__option"
+                  [id]="'movement-payment-method-' + paymentMethod.id"
+                  [class.field__option--active]="activePaymentMethodIndex() === index"
+                  role="option"
+                  [attr.aria-selected]="activePaymentMethodIndex() === index"
+                  (mousedown)="$event.preventDefault()"
+                  (click)="onSelectPaymentMethod(paymentMethod)"
+                >
+                  <span class="field__option-label">{{ paymentMethod.name }}</span>
+                  <span class="field__option-meta">{{ paymentMethod.currency }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        @if (!paymentMethodsStore.isLoading() && !paymentMethodsStore.hasPaymentMethods()) {
+          <p class="field__hint">
+            No tienes métodos de pago guardados.
+            <a class="movement__link" routerLink="/metodos-pago/nuevo">Agrega uno</a>
+          </p>
+        }
+      </div>
+    </div>
+
+    <!-- Categoría: texto libre con sugerencias -->
+    <div class="field">
+      <div class="field__row">
+        <label class="field__label" for="category">Categoría (opcional)</label>
+        <span class="field__counter" id="category-counter">
+          {{ movementModel().category.length }}/{{ categoryMaxLength }}
+        </span>
+      </div>
+      <!-- Desplegable propio: el del `datalist` nativo lo posiciona el
+           navegador y quedaba lejos del campo. -->
+      <div class="field__combobox" (focusout)="onCategoryFocusOut($event)">
         <input
           class="field__input"
           id="category"
           type="text"
+          role="combobox"
           autocomplete="off"
-          list="movement-categories"
+          aria-autocomplete="list"
+          aria-controls="movement-categories"
+          [attr.aria-expanded]="isCategoryListOpen()"
+          [attr.aria-activedescendant]="activeCategoryId()"
           aria-describedby="category-counter"
-          [attr.aria-invalid]="
-            movementForm.category().touched() && movementForm.category().invalid()
-          "
+          [attr.aria-invalid]="movementForm.category().touched() && movementForm.category().invalid()"
           [class.field__input--invalid]="
             movementForm.category().touched() && movementForm.category().invalid()
           "
           [formField]="movementForm.category"
+          (focus)="onCategoryFocus()"
+          (input)="onCategoryInput()"
+          (keydown)="onCategoryKeydown($event)"
         />
-        <datalist id="movement-categories">
-          @for (category of categories; track category) {
-            <option [value]="category"></option>
-          }
-        </datalist>
-        @if (movementForm.category().touched() && movementForm.category().invalid()) {
-          <ul class="field__errors" role="alert">
-            @for (error of movementForm.category().errors(); track $index) {
-              <li>{{ error.message }}</li>
+
+        @if (isCategoryListOpen()) {
+          <ul
+            class="field__listbox"
+            id="movement-categories"
+            role="listbox"
+            aria-label="Categorías sugeridas"
+          >
+            @if (categorySuggestions().length === 0) {
+              <li class="field__listbox-empty" role="presentation">Sin coincidencias</li>
+            }
+
+            @for (category of categorySuggestions(); track category; let index = $index) {
+              <li
+                class="field__option"
+                [id]="'movement-category-' + index"
+                [class.field__option--active]="activeCategoryIndex() === index"
+                role="option"
+                [attr.aria-selected]="activeCategoryIndex() === index"
+                (mousedown)="$event.preventDefault()"
+                (click)="onSelectCategory(category)"
+              >
+                {{ category }}
+              </li>
             }
           </ul>
         }
       </div>
+      @if (movementForm.category().touched() && movementForm.category().invalid()) {
+        <ul class="field__errors" role="alert">
+          @for (error of movementForm.category().errors(); track $index) {
+            <li>{{ error.message }}</li>
+          }
+        </ul>
+      }
     </div>
 
     <div class="movement__actions">
@@ -180,5 +283,4 @@
       <a class="movement__link" routerLink="/dashboard">Volver al resumen</a>
     </p>
   </form>
-
 </section>

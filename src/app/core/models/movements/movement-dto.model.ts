@@ -8,6 +8,7 @@ export interface MovementDto {
     description: string,
     date: string,
     type: MovementType,
+    paymentMethodId?: number,
     category: string,
     currency: string
 }

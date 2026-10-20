@@ -26,6 +26,8 @@ export interface AddMovementForm {
     category: string;
 
     currency: MovementCurrency;
+
+    paymentMethodId?: number;
 }
 
 /**
@@ -46,6 +48,7 @@ export function createInitialMovementForm(): AddMovementForm {
         description: '',
         date: today(),
         type: 'expense',
+        paymentMethodId: undefined,
         category: '',
         currency: 'USD',
     };

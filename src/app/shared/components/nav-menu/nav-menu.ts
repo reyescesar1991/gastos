@@ -45,11 +45,37 @@ export class NavMenu {
     { initialValue: this.router.url },
   );
 
-  /** Indica si la opción corresponde a la ruta activa. */
+  /**
+   * Indica si la opción corresponde a la ruta activa.
+   *
+   * Una opción con subhijas se marca cuando la URL cae dentro de su rama; una
+   * hoja solo cuando su ruta es exactamente la actual. Comparar por prefijo en
+   * las hojas encendía de más: estando en `/metodos-pago/nuevo` también marcaba
+   * "Mis métodos de pago", cuya ruta es `/metodos-pago`.
+   */
   protected isActive(item: NavigationItem): boolean {
-    const url = this.currentUrl();
+    const url = this.normalizeUrl(this.currentUrl());
 
-    return url === item.route || url.startsWith(`${item.route}/`);
+    if (item.children?.length) {
+      return (
+        this.isWithin(url, item.route) ||
+        item.children.some((child) => child.enabled && this.isActive(child))
+      );
+    }
+
+    return url === this.normalizeUrl(item.route);
+  }
+
+  /** Ruta comparable: sin query, sin hash y sin barra final. */
+  private normalizeUrl(url: string): string {
+    return url.split(/[?#]/)[0].replace(/\/+$/, '');
+  }
+
+  /** Indica si la URL cuelga de la ruta indicada. */
+  private isWithin(url: string, route: string): boolean {
+    const base = this.normalizeUrl(route);
+
+    return url === base || url.startsWith(`${base}/`);
   }
 
   /** Indica si la opción tiene sus subhijas desplegadas. */

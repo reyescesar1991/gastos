@@ -62,6 +62,8 @@ export const currencySchema = z.enum(CURRENCY_TYPE, { error: 'Selecciona una mon
 
 export const dateSchema = z.date({ error: 'Selecciona una fecha' });
 
+export const paymentMethodSchema = z.number().optional();
+
 export const addMovementSchema = z.object({
   description: descriptionSchema,
   amount: amountSchema,
@@ -69,4 +71,5 @@ export const addMovementSchema = z.object({
   category: categorySchema,
   currency: currencySchema,
   date: dateSchema,
+  paymentMethodId: paymentMethodSchema,
 });

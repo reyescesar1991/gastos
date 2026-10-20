@@ -111,6 +111,81 @@
   font-size: 0.75rem;
 }
 
+/* Combobox de categoría: el desplegable se ancla al campo, no al documento */
+.field__combobox {
+  position: relative;
+}
+
+.field__listbox {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + var(--space-1));
+  z-index: 20;
+  max-height: 13rem;
+  margin: 0;
+  padding: var(--space-1);
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  animation: category-list-in 160ms var(--ease-out-quint) both;
+}
+
+.field__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-xs);
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+/* Moneda del método de pago, como dato secundario de la opción */
+.field__option-meta {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+/* "Quitar" del selector opcional: texto, no botón de acción */
+.field__clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.field__clear:hover {
+  color: var(--ink);
+}
+
+.field__hint {
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+}
+
+.field__option:hover,
+.field__option--active {
+  background-color: var(--surface-muted);
+  color: var(--ink);
+}
+
+.field__listbox-empty {
+  padding: var(--space-2) var(--space-3);
+  color: var(--ink-muted);
+  font-size: 0.875rem;
+}
+
 .field__input {
   width: 100%;
   min-width: 0;
@@ -312,6 +387,18 @@
   }
 }
 
+@keyframes category-list-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (min-width: 480px) {
   .movement {
     padding: var(--space-8) var(--space-6) var(--space-10);
@@ -349,7 +436,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .movement__intro,
-  .movement__card {
+  .movement__card,
+  .field__listbox {
     animation: none;
   }
 }

@@ -1,7 +1,7 @@
 /**
  * Sugerencias de categoría del formulario de movimientos.
  *
- * Alimentan el `datalist` del campo: orientan al usuario con las categorías
+ * Alimentan el desplegable del campo: orientan al usuario con las categorías
  * habituales de una app de gastos personales, pero la categoría sigue siendo
  * opcional y de texto libre, así que se puede escribir cualquier otra. Cuando
  * exista el endpoint de categorías, esta lista se reemplaza por su respuesta sin
