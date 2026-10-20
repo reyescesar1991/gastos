@@ -5,8 +5,7 @@ export const PAYMENT_METHODS_ROUTES : Routes = [
 
     {
         path: '',
-        redirectTo: 'nuevo',
-        pathMatch: 'full',
+        loadComponent: () => import('./components/list-payment-methods/list-payment-methods').then((m) => m.ListPaymentMethods)
     },
 
     {

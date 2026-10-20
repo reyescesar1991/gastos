@@ -76,7 +76,7 @@ describe('NavMenu', () => {
     expect(fixture.nativeElement.querySelectorAll('.nav-menu__state').length).toBe(1);
   });
 
-  it('navega al registro de método de pago desde su subhija', async () => {
+  it('navega a la lista y al alta desde las subhijas de métodos de pago', async () => {
     const navigate = vi.spyOn(router, 'navigateByUrl');
     const paymentMethods = links()[2];
 
@@ -90,14 +90,18 @@ describe('NavMenu', () => {
 
     expect(paymentMethods.getAttribute('aria-expanded')).toBe('true');
 
-    const child = fixture.nativeElement.querySelector(
-      '.nav-menu__link--child',
-    ) as HTMLButtonElement;
+    const children = Array.from(
+      fixture.nativeElement.querySelectorAll('.nav-menu__link--child'),
+    ) as HTMLButtonElement[];
 
-    expect(child.textContent).toContain('Agregar método de pago');
+    expect(children.length).toBe(2);
+    expect(children[0].textContent).toContain('Mis métodos de pago');
+    expect(children[1].textContent).toContain('Agregar método de pago');
 
-    child.click();
+    children[0].click();
+    expect(navigate).toHaveBeenCalledWith('/metodos-pago');
 
+    children[1].click();
     expect(navigate).toHaveBeenCalledWith('/metodos-pago/nuevo');
   });
 

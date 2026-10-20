@@ -453,7 +453,7 @@ npx ng build
 npx prettier --check "src/app/features/payment-methods/**/*.{ts,html,scss}"
 ```
 
-- Todas las specs en verde (155 actuales en 25 archivos + las nuevas).
+- Todas las specs en verde (188 en 29 archivos).
 - Build sin errores ni warnings nuevos; vigilar el presupuesto de estilos por componente.
 - Sin dependencias nuevas.
 
@@ -483,7 +483,7 @@ Checklist manual (390×844 y 1280×800):
 | C   | Persistencia del mock  | **Sí**, en memoria de la instancia del servicio.                                                                                                      |
 | D   | Backend                | **Supabase**: `PATCH /rest/v1/payment_methods?id=eq.{id}` con body parcial. La Data API filtra por query param; el id del body no selecciona la fila. |
 
-Decisiones cerradas. Fases 1 a 3 completadas; pausa antes de la Fase 4.
+Decisiones cerradas. Fases 1 a 4 completadas; módulo cerrado.
 
 ---
 
@@ -526,15 +526,18 @@ límite de error de 8 kB).
 **Verificación:** `npx ng test --watch=false` → 188/188 en 29 archivos; `npx ng build` → exit 0, con
 los dos avisos de presupuesto ya conocidos (`add-movement` y la lista).
 
-### Fase 4 — Rutas, menú y cierre
+### Fase 4 — Rutas, menú y cierre (completada)
 
-- `payment-methods-routes.ts` con la lista en `''`.
-- `navigation-menu.mock.ts` con `paymentMethodList` como primera subhija.
-- Ajustes en `app.routes.spec.ts` y `nav-menu.spec.ts`; verificación de `quick-nav.spec.ts`.
-- Actualizar este plan con lo ejecutado y los resultados reales.
+- `payment-methods-routes.ts`: `''` carga `ListPaymentMethods`; `nuevo` conserva el alta.
+- `navigation-menu.mock.ts`: `paymentMethodList` como primera subhija (“Mis métodos de pago”,
+  `/metodos-pago`) y el alta como segunda.
+- `app.routes.spec.ts`: `/metodos-pago` monta la lista dentro del layout; el alta sigue en
+  `/metodos-pago/nuevo`.
+- `nav-menu.spec.ts`: dos subhijas con su navegación; `quick-nav.spec.ts` sin cambios.
+- Módulo cerrado; checklist manual pendiente.
 
-**Verificación final:** `npx ng test --watch=false`, `npx ng build`, Prettier; checklist manual
-pendiente de ejecución en navegador.
+**Verificación final:** `npx ng test --watch=false` → 188/188 en 29 archivos; `npx ng build` → exit 0,
+con los dos avisos de presupuesto conocidos. Prettier limpio en los archivos tocados.
 
 ---
 
