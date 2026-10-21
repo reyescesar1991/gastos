@@ -15,4 +15,12 @@ export const environment: AppEnvironment = {
 
   // Toda la app interna exige sesión: el layout monta `authGuard`.
   requireAuth: true,
+
+  // Credenciales del proyecto de Supabase de producción.
+  supabaseUrl: '',
+  supabaseAnonKey: '',
+
+  // Activar cuando Supabase Auth sea la sesión principal y haya que restaurarla
+  // antes de la primera pantalla.
+  supabaseEagerInit: false,
 };

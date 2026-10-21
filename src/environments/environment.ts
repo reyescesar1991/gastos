@@ -11,4 +11,13 @@ export const environment: AppEnvironment = {
   production: false,
   apiUrl: 'http://localhost:3000/api',
   requireAuth: false,
+
+  // Completar con el proyecto de Supabase en desarrollo. Mientras estén vacías,
+  // `SupabaseService` no crea el cliente y los mocks siguen mandando.
+  supabaseUrl: '',
+  supabaseAnonKey: '',
+
+  // El cliente sigue siendo perezoso: se crea en el primer acceso a
+  // `SupabaseService`. Ponerlo en `true` lo inicializa en el arranque.
+  supabaseEagerInit: false,
 };

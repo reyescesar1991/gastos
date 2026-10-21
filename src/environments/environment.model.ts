@@ -19,4 +19,30 @@ export interface AppEnvironment {
    * ruta del layout monta `authGuard` solo cuando está en `true`.
    */
   readonly requireAuth: boolean;
+
+  /**
+   * URL del proyecto de Supabase (Project URL).
+   *
+   * Vacía mientras no haya proyecto: el cliente no se crea y la app sigue
+   * funcionando con los mocks.
+   */
+  readonly supabaseUrl: string;
+
+  /**
+   * Anon key del proyecto.
+   *
+   * Es pública por diseño (va en el bundle); la seguridad real la dan las
+   * políticas RLS de la base.
+   */
+  readonly supabaseAnonKey: string;
+
+  /**
+   * Crea el cliente de Supabase durante el arranque en vez de esperar al primer
+   * uso.
+   *
+   * En `false` el cliente sigue siendo perezoso. Se activa cuando Supabase Auth
+   * pase a ser la sesión principal y haga falta restaurarla antes de la primera
+   * pantalla.
+   */
+  readonly supabaseEagerInit: boolean;
 }
