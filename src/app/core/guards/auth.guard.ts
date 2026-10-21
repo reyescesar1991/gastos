@@ -9,7 +9,8 @@ export const authGuard : CanActivateFn = (route, state) => {
     const router = inject(Router);
 
     if(!session.isLoggedIn()){
-        router.navigate(['/login']);
+        // `/login` no existe como ruta raíz: el login vive bajo `/auth`.
+        router.navigate(['/auth/login']);
         return false;
     }
 

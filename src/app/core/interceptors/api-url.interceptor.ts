@@ -1,6 +1,6 @@
 // src/app/core/net/interceptors/api-url.interceptor.ts
 import { HttpInterceptorFn } from '@angular/common/http';
-import { environment } from '../config/environments';
+import { environment } from '../../../environments/environment';
 
 export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
   // Si la petición es relativa (ej. '/gastos'), le pega la base de la API

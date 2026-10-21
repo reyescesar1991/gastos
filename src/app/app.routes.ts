@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { environment } from '../environments/environment';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
 
@@ -12,9 +14,13 @@ export const routes: Routes = [
         loadChildren: () => import('./features/auth/auth-routes').then((m) => m.AUTH_ROUTES)
     },
     {
-        // Ruta padre del layout: header y menú disponibles en todos los módulos
+        // Ruta padre del layout: header y menú disponibles en todos los módulos.
+        // En producción exige sesión; en desarrollo el entorno deja pasar para
+        // poder navegar sin login. El guard queda fuera de la rama de auth para
+        // no bloquear el propio login.
         path: '',
         loadComponent: () => import('./shared/layout/app-layout/app-layout').then((m) => m.AppLayout),
+        canActivate: environment.requireAuth ? [authGuard] : [],
         children: [
             {
                 path: 'dashboard',
