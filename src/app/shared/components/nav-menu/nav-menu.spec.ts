@@ -10,8 +10,8 @@ import { NavMenu } from './nav-menu';
  * Pruebas del menú de navegación.
  *
  * Cubren el instructivo observable desde el DOM: las cuatro opciones dummy, el
- * estado desactivado mientras no existan sus vistas, el estilo de opción
- * seleccionada y el desplegable de rutas subhijas.
+ * estado habilitado de cada vista, el estilo de opción seleccionada y el
+ * desplegable de rutas subhijas.
  */
 describe('NavMenu', () => {
   let fixture: ComponentFixture<NavMenu>;
@@ -76,15 +76,12 @@ describe('NavMenu', () => {
     ]);
   });
 
-  it('deja deshabilitada solo la opción que todavía no tiene vista', () => {
-    // Del mock, "Ver movimientos" es la única que aún no tiene vista.
+  it('deja todas las opciones habilitadas porque todas tienen vista', () => {
     const disabled = links().filter((link) => link.disabled);
 
     expect(links().length).toBe(4);
-    expect(disabled.length).toBe(1);
-    expect(disabled[0].textContent).toContain('Ver movimientos');
-    expect(disabled.every((link) => link.getAttribute('aria-disabled') === 'true')).toBe(true);
-    expect(fixture.nativeElement.querySelectorAll('.nav-menu__state').length).toBe(1);
+    expect(disabled.length).toBe(0);
+    expect(fixture.nativeElement.querySelector('.nav-menu__state')).toBeNull();
   });
 
   it('navega a la lista y al alta desde las subhijas de métodos de pago', async () => {

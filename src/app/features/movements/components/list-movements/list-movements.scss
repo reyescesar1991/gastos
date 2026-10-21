@@ -1,0 +1,173 @@
+/* ---------------------------------------------------------------------------
+ * Vista completa de movimientos.
+ *
+ * Mobile first: intro editorial con el CTA apilado y, desde 768px, titular y
+ * acción en la misma fila. Las filas las pinta `app-movements-list`; acá viven
+ * el layout, la alerta, la acción de alta y el conteo. Sin sombras ni
+ * degradados, con los tokens de styles.scss.
+ * ------------------------------------------------------------------------- */
+
+:host {
+  display: block;
+  background-color: var(--canvas);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: var(--space-6) var(--space-4) var(--space-10);
+}
+
+.list__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  animation: list-reveal var(--duration-reveal) var(--ease-out-quint) both;
+}
+
+.list__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.list__tag {
+  align-self: flex-start;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-pill);
+  background-color: var(--pale-green);
+  color: var(--pale-green-ink);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.list__title {
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.list__subtitle {
+  max-width: 42rem;
+  color: var(--ink-muted);
+  font-size: 0.9375rem;
+}
+
+/* Acciones y avisos */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0.75rem var(--space-4);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.btn--primary {
+  background-color: var(--ink);
+  color: var(--ink-inverse);
+}
+
+.btn--primary:hover {
+  background-color: var(--ink-soft);
+  border-color: var(--ink-soft);
+}
+
+.btn--ghost {
+  border-color: var(--border);
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+.btn--ghost:hover {
+  background-color: var(--surface-muted);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.list__alert {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--pale-red-ink);
+  border-radius: var(--radius-sm);
+  background-color: var(--pale-red);
+  color: var(--pale-red-ink);
+  font-size: 0.875rem;
+}
+
+.list__retry {
+  width: auto;
+  align-self: flex-start;
+  padding: var(--space-2) var(--space-3);
+}
+
+.list__count {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+@keyframes list-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .list {
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-6) var(--space-10);
+  }
+
+  .list__intro {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+
+  .list__add {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list__intro {
+    animation: none;
+  }
+
+  .btn {
+    transition: none;
+  }
+}

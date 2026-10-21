@@ -1,5 +1,5 @@
 <section class="movements" aria-labelledby="movements-title">
-  <h2 class="section-title" id="movements-title">Últimos movimientos</h2>
+  <h2 class="section-title" id="movements-title">{{ heading() }}</h2>
 
   @if (isLoading()) {
     <p class="movements__status">Cargando movimientos…</p>
@@ -20,6 +20,18 @@
               <span class="movement__currency">{{ movement.currency }}</span>
               <span class="movement__date">{{ date(movement.date) }}</span>
             </p>
+
+            @if (showPaymentMethod()) {
+              <p class="movement__payment">
+                <span class="movement__payment-label">Método de pago</span>
+                <span class="movement__payment-name">
+                  {{ paymentMethodName(movement.paymentMethodId) }}
+                </span>
+                <span class="movement__payment-number">
+                  {{ paymentMethodNumber(movement.paymentMethodId) }}
+                </span>
+              </p>
+            }
           </div>
 
           <p class="movement__amount">{{ amount(movement) }}</p>

@@ -34,21 +34,29 @@ export const MovementsStore = signalStore(
     withState(initialState),
 
     withComputed(
-        (store) => ({
+        (store) => {
 
-            movementsList: computed(() => store.movements() ?? []),
+            // Orden cronológico inverso para las dos vistas que listan
+            // movimientos (la API envía fechas ISO YYYY-MM-DD, que ordenan
+            // lexicográficamente igual que cronológicamente).
+            const sortedMovements = computed(() => [...(store.movements() ?? [])]
+                .sort((first, second) => second.date.localeCompare(first.date)));
 
-            // Últimos movimientos para la vista de resumen: orden cronológico
-            // inverso (la API envía fechas ISO YYYY-MM-DD, que ordenan
-            // lexicográficamente igual que cronológicamente) y recorte al
-            // límite de la vista.
-            latestMovements: computed(() => [...(store.movements() ?? [])]
-                .sort((first, second) => second.date.localeCompare(first.date))
-                .slice(0, LATEST_MOVEMENTS_LIMIT)),
+            return {
 
-            // Permite distinguir "sin movimientos" de una lista vacía por filtro.
-            hasMovements: computed(() => (store.movements() ?? []).length > 0),
-        })
+                movementsList: computed(() => store.movements() ?? []),
+
+                // Lista completa para la vista "Ver movimientos".
+                sortedMovements,
+
+                // Últimos movimientos para la vista de resumen: el mismo orden,
+                // recortado al límite de la vista.
+                latestMovements: computed(() => sortedMovements().slice(0, LATEST_MOVEMENTS_LIMIT)),
+
+                // Permite distinguir "sin movimientos" de una lista vacía por filtro.
+                hasMovements: computed(() => (store.movements() ?? []).length > 0),
+            };
+        }
     ),
 
     withMethods(

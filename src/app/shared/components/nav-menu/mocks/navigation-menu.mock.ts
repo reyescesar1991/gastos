@@ -20,10 +20,10 @@ export const NAVIGATION_IDS = {
  * Data dummy del menú de navegación.
  *
  * Cada opción viaja con `enabled` según exista o no su vista: las que todavía
- * no existen se muestran atenuadas y sin navegar. "Agregar movimiento",
- * "Métodos de pago" y "Configuración de usuario" ya están habilitadas; al crear
- * la ruta de las demás basta con poner el ítem en `true` para activar la opción,
- * el estado seleccionado y los accesos rápidos que la consumen. "Métodos de
+ * no existen se muestran atenuadas y sin navegar; hoy todas tienen su ruta y
+ * están habilitadas. Al crear una vista nueva basta con poner el ítem en `true`
+ * para activar la opción, el estado seleccionado y los accesos rápidos que la
+ * consumen. "Métodos de
  * pago" agrupa sus rutas en `children`: "Mis métodos de pago" abre el listado y
  * "Agregar método de pago" el formulario de alta.
  */
@@ -41,7 +41,7 @@ export const NAVIGATION_MENU_MOCK: NavigationItem[] = [
         label: 'Ver movimientos',
         icon: 'list',
         route: '/movimientos',
-        enabled: false,
+        enabled: true,
     },
     {
         id: NAVIGATION_IDS.paymentMethods,

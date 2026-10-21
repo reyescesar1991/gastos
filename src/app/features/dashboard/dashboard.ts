@@ -5,7 +5,7 @@ import { NavStore } from '../../core/stores/navigation/nav.store';
 import { AppIcon } from '../../shared/components/app-icon/app-icon';
 import { NAVIGATION_IDS } from '../../shared/components/nav-menu/mocks/navigation-menu.mock';
 import { BalanceSummary } from './components/balance-summary/balance-summary';
-import { MovementsList } from './components/movements-list/movements-list';
+import { MovementsList } from '../movements/components/movements-list/movements-list';
 import { QuickNav } from './components/quick-nav/quick-nav';
 
 /**

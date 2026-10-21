@@ -13,6 +13,7 @@ export const MOVEMENTS_MOCK : ApiSuccessResponse<MovementDto[]> = {
             amount: 50.00,
             date: '2023-07-01',
             type: 'income',
+            paymentMethodId: 1,
             category: 'Compras',
             currency: 'USD'
         },
@@ -22,6 +23,7 @@ export const MOVEMENTS_MOCK : ApiSuccessResponse<MovementDto[]> = {
             amount: 100.00,
             date: '2023-07-05',
             type: 'expense',
+            paymentMethodId: 2,
             category: 'Servicios',
             currency: 'USD'
         }

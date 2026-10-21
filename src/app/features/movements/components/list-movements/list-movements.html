@@ -1,0 +1,39 @@
+<section class="list" aria-labelledby="list-movements-title">
+  <header class="list__intro">
+    <div class="list__heading">
+      <span class="list__tag">Movimientos</span>
+      <h1 class="list__title" id="list-movements-title">Mis movimientos</h1>
+      <p class="list__subtitle">
+        Todos los gastos e ingresos que registraste, con el método de pago asociado.
+      </p>
+    </div>
+
+    <a class="btn btn--primary list__add" routerLink="/movimientos/nuevo">
+      <app-icon name="plus" size="sm" />
+      Registrar movimiento
+    </a>
+  </header>
+
+  @if (movementsStore.error(); as error) {
+    <div class="list__alert" role="alert">
+      <p>{{ error }}</p>
+      <button class="btn btn--ghost list__retry" type="button" (click)="onRetry()">
+        Reintentar
+      </button>
+    </div>
+  }
+
+  @if (!movementsStore.error() || hasMovements()) {
+    <app-movements-list
+      heading="Todos los movimientos"
+      [movements]="movements()"
+      [hasMovements]="hasMovements()"
+      [isLoading]="isInitialLoading()"
+      [showPaymentMethod]="true"
+    />
+  }
+
+  @if (hasMovements()) {
+    <p class="list__count">{{ movementsCount() }}</p>
+  }
+</section>

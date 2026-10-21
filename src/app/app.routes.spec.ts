@@ -58,10 +58,14 @@ describe('Rutas de la app', () => {
     expect(compiled.querySelector('app-add-movement')).not.toBeNull();
   });
 
-  it('redirige la raíz del módulo de movimientos a su registro', async () => {
-    await navigateTo('/movimientos');
+  it('monta la lista de movimientos dentro del layout', async () => {
+    const compiled = await navigateTo('/movimientos');
 
-    expect(router.url).toBe('/movimientos/nuevo');
+    expect(router.url).toBe('/movimientos');
+    expect(compiled.querySelector('app-header')).not.toBeNull();
+    expect(compiled.querySelector('app-nav-menu')).not.toBeNull();
+    expect(compiled.querySelector('app-list-movements')).not.toBeNull();
+    expect(compiled.querySelector('app-list-movements #movements-title')).not.toBeNull();
   });
 
   it('monta el registro de método de pago dentro del layout', async () => {

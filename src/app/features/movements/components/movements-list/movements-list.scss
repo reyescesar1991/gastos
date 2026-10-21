@@ -101,6 +101,37 @@
   font-size: 0.75rem;
 }
 
+/* Método de pago: solo en la vista completa; el nombre puede truncarse */
+.movement__payment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+}
+
+.movement__payment-label {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.movement__payment-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.movement__payment-number {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 /* Tag de tipo: pastel del semáforo, mono en mayúsculas */
 .movement__type {
   padding: 1px var(--space-2);
